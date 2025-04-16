@@ -5,6 +5,13 @@ import { colors, breakpoints } from "../styles/theme";
 import { FlexContainer } from "../styles/common";
 import { useAuthStore } from "../store/useAuthStore";
 import { useScreenStore } from "../store/useScreenStore";
+import EducationListIcon from "../assets/icons/EducationListIcon.svg";
+import SpaceListIcon from "../assets/icons/SpaceListIcon.svg";
+import EducationMapIcon from "../assets/icons/EducationMapIcon.svg";
+import SpaceMapIcon from "../assets/icons/SpaceMapIcon.svg";
+import MypageIcon from "../assets/icons/MypageIcon.svg";
+import LoginIcon from "../assets/icons/LoginIcon.svg";
+import LogoutIcon from "../assets/icons/LogoutIcon.svg";
 
 //네비게이션 바 영역(desktop : width 80px, mobile : height 70px)
 const NavContainer = styled.nav`
@@ -65,7 +72,7 @@ const NavList = styled.div`
 `;
 
 //로그인 컨테이너(dexktop : 하단에 표시, 모바일 : NavList 내부에 표시하므로 숨김)
-const SignUpContainer = styled.div`
+const LoginContainer = styled.div`
   @media (max-width: ${breakpoints.md}) {
     display: none;
   }
@@ -75,14 +82,17 @@ const SignUpContainer = styled.div`
 const NavItem = styled.button<{ active: boolean }>`
   border: none;
   display: flex;
+  flex-direction: column;
+  gap: 8px;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 80px;
   cursor: pointer;
+  font-weight: bold;
   background-color: ${(props) =>
     props.active ? colors.secondary : "transparent"};
-  color: ${(props) => (props.active ? colors.gray[700] : colors.gray[600])};
+  color: black;
   transition: all 0.2s ease;
 
   @media (max-width: ${breakpoints.md}) {
@@ -93,8 +103,13 @@ const NavItem = styled.button<{ active: boolean }>`
 
   &:hover {
     background-color: ${colors.gray[200]};
-    color: ${colors.gray[700]};
+    color: black;
   }
+`;
+
+const NavItemIcon = styled.img`
+  width: 40px;
+  height: 40px;
 `;
 
 const Navigation: React.FC = () => {
@@ -107,21 +122,22 @@ const Navigation: React.FC = () => {
 
   // 기본 네비게이션 항목들 (공통)
   const navItems = [
-    { path: "/", label: "무료교육" },
-    { path: "/space-list", label: "무료공간" },
-    { path: "/education-map", label: "교육지도" },
-    { path: "/space-map", label: "공간지도" },
+    { path: "/", icon: EducationListIcon, label: "무료교육" },
+    { path: "/space-list", icon: SpaceListIcon, label: "무료공간" },
+    { path: "/education-map", icon: EducationMapIcon, label: "교육지도" },
+    { path: "/space-map", icon: SpaceMapIcon, label: "공간지도" },
   ];
 
   // 로그인 여부에 따라 마이페이지 또는 로그인 항목 표시
-  const signUpItem = { path: "/signup", label: "로그인" };
-  const myPageItem = { path: "/mypage", label: "MY" };
+  const signUpItem = { path: "/signup", icon: LoginIcon, label: "로그인" };
+  const myPageItem = { path: "/mypage", icon: MypageIcon, label: "MY" };
+  const logoutItem = { path: "/logout", icon: LogoutIcon, label: "로그아웃" };
 
   // 모바일 전용 네비게이션 항목
   const mobileExtraNavItem = isAuthenticated ? myPageItem : signUpItem;
 
   // 데스크톱 전용 네비게이션 항목 (하단에 표시)
-  const desktopExtraNavItem = signUpItem;
+  const desktopExtraNavItem = isAuthenticated ? logoutItem : signUpItem;
 
   return (
     <NavContainer>
@@ -139,6 +155,7 @@ const Navigation: React.FC = () => {
             active={location.pathname === item.path} // 현재 경로와 일치 시 강조
             onClick={() => navigate(item.path)} // 클릭 시 해당 경로로 이동
           >
+            <NavItemIcon src={item.icon} alt={item.label} />
             {item.label}
           </NavItem>
         ))}
@@ -149,6 +166,7 @@ const Navigation: React.FC = () => {
             active={location.pathname === myPageItem.path}
             onClick={() => navigate(myPageItem.path)}
           >
+            <NavItemIcon src={myPageItem.icon} alt={myPageItem.label} />
             {myPageItem.label}
           </NavItem>
         )}
@@ -159,6 +177,10 @@ const Navigation: React.FC = () => {
             active={location.pathname === mobileExtraNavItem.path}
             onClick={() => navigate(mobileExtraNavItem.path)}
           >
+            <NavItemIcon
+              src={mobileExtraNavItem.icon}
+              alt={mobileExtraNavItem.label}
+            />
             {mobileExtraNavItem.label}
           </NavItem>
         )}
@@ -166,15 +188,19 @@ const Navigation: React.FC = () => {
 
       {/* 데스크톱: 로그인 버튼은 항상 하단 고정 */}
       {!isMobile && (
-        <SignUpContainer>
+        <LoginContainer>
           <NavItem
             key={desktopExtraNavItem.path}
             active={location.pathname === desktopExtraNavItem.path}
             onClick={() => navigate(desktopExtraNavItem.path)}
           >
+            <NavItemIcon
+              src={desktopExtraNavItem.icon}
+              alt={desktopExtraNavItem.label}
+            />
             {desktopExtraNavItem.label}
           </NavItem>
-        </SignUpContainer>
+        </LoginContainer>
       )}
     </NavContainer>
   );
