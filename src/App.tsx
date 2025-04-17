@@ -20,7 +20,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     font-family: ${fonts.body};
     color: ${colors.gray[700]};
-    background-color: ${colors.gray[100]};
+    background-color: white;
   }
 
   h1, h2, h3, h4, h5, h6 {
