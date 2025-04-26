@@ -1,16 +1,17 @@
-import React from "react";
 import styled from "styled-components";
+import NaverMap from "../components/NaverMap";
 
 const EducationMap: React.FC = () => {
   return (
     <EducationMapContainer>
-      <h1>교육지도</h1>
+      <NaverMap />
     </EducationMapContainer>
   );
 };
 
 const EducationMapContainer = styled.div`
-  padding: 20px;
+  width: 100%;
+  height: 100vh;
 `;
 
 export default EducationMap;
