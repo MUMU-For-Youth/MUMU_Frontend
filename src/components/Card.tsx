@@ -4,12 +4,33 @@ import React, { useState } from "react";
 import styled from "styled-components";
 // 버튼, 이미지, 아이콘 등 외부 리소스 import
 import GotoMapButtonSvg from "../assets/buttons/GotoMapButton.svg";
-import LearnMoreButtonSvg from "../assets/buttons/LearnMoreButton.svg";
-import ApplyButtonSvg from "../assets/buttons/ApplyButton.svg";
 import EducationDummyImage from "../assets/dummyImage/EducationDummyImage.svg";
 import UnBookmarkIcon from "../assets/icons/UnBookmarkIcon.svg";
 import BookmarkIcon from "../assets/icons/BookmarkIcon.svg";
 import CardTag from "./CardTag";
+
+// 자세히 보기/신청하기 버튼 타입 정의
+type ActionButtonType = "learnMore" | "apply";
+
+interface ActionButtonProps {
+  type: ActionButtonType;
+  onClick?: () => void;
+}
+
+const ActionButton: React.FC<ActionButtonProps> = ({ type, onClick }) => {
+  // 버튼별 텍스트 및 스타일 분기
+  const isLearnMore = type === "learnMore";
+  return (
+    <StyledActionButton
+      type="button"
+      aria-label={isLearnMore ? "자세히 보기" : "신청하기"}
+      onClick={onClick}
+      $buttonType={type}
+    >
+      {isLearnMore ? "자세히 보기" : "신청하기"}
+    </StyledActionButton>
+  );
+};
 
 // Card 컴포넌트: 교육 카드 UI를 렌더링
 const Card: React.FC = () => {
@@ -18,7 +39,22 @@ const Card: React.FC = () => {
 
   // 북마크 버튼 클릭 핸들러
   const handleBookmarkClick = () => {
-    setBookmarked((prev) => !prev);
+    if (!bookmarked) {
+      setBookmarked(true);
+      alert("북마크 했습니다");
+    } else {
+      setBookmarked(false);
+      alert("북마크를 해제했습니다");
+    }
+  };
+
+  // 각 버튼 클릭 핸들러 예시
+  const handleLearnMore = () => {
+    alert("자세히 보기 클릭!");
+  };
+
+  const handleApply = () => {
+    alert("신청하기 클릭!");
   };
 
   return (
@@ -40,13 +76,15 @@ const Card: React.FC = () => {
           />
         </BookmarkButton>
       </CardTitleRow>
-      {/* 카드 대표 이미지 */}
-      <CardImage src={EducationDummyImage} alt="워크숍 이미지" />
+      {/* 카드 대표 이미지 + 오버레이 텍스트 */}
+      <ImageWrapper>
+        <CardImage src={EducationDummyImage} alt="워크숍 이미지" />
+      </ImageWrapper>
       {/* 카드 상세 정보 영역 */}
       <CardTextBox>
         <CardRow>
           <CardLabel>일시</CardLabel>
-          <CardTextRight>2025.04.22 (화)</CardTextRight>
+          <CardTextRight>2025.04.22(화)</CardTextRight>
         </CardRow>
         <CardRow>
           <CardLabel>방식</CardLabel>
@@ -54,7 +92,7 @@ const Card: React.FC = () => {
         </CardRow>
         <CardRow>
           <CardLabel>주소</CardLabel>
-          <CardTextRight>서울특별시 성수구</CardTextRight>
+          <CardTextRight>서울특별시 용산구</CardTextRight>
         </CardRow>
         <CardRow>
           <CardLabel>일정</CardLabel>
@@ -75,22 +113,8 @@ const Card: React.FC = () => {
         >
           <img src={GotoMapButtonSvg} alt="지도보기" />
         </IconButton>
-        <IconButton
-          as="button"
-          type="button"
-          tabIndex={0}
-          aria-label="자세히 보기"
-        >
-          <img src={LearnMoreButtonSvg} alt="자세히 보기" />
-        </IconButton>
-        <IconButton
-          as="button"
-          type="button"
-          tabIndex={0}
-          aria-label="신청하기"
-        >
-          <img src={ApplyButtonSvg} alt="신청하기" />
-        </IconButton>
+        <ActionButton type="learnMore" onClick={handleLearnMore} />
+        <ActionButton type="apply" onClick={handleApply} />
       </CardButtonBox>
     </CardContainer>
   );
@@ -111,8 +135,6 @@ const CardContainer = styled.div`
   flex-direction: column;
   box-sizing: border-box;
   position: relative;
-  height: 100%;
-  /* 주요 영역 간격(gap) 적용 */
   gap: 18px;
 `;
 
@@ -120,7 +142,6 @@ const CardContainer = styled.div`
 const CardTitleRow = styled.div`
   display: flex;
   align-items: center;
-  /* margin-bottom: 12px; 제거 (gap으로 대체) */
 `;
 
 // 카드 제목 스타일
@@ -141,21 +162,45 @@ const BookmarkButton = styled.button`
   height: 32px;
 `;
 
+// 카드 대표 이미지 + 오버레이 텍스트 래퍼
+const ImageWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: stretch;
+`;
+
 // 카드 대표 이미지 스타일
 const CardImage = styled.img`
   width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
   border-radius: 12px;
-  /* margin-bottom: 18px; 제거 (gap으로 대체) */
   background: #f3f3f3;
+`;
+
+// 이미지 오버레이 텍스트 스타일
+const ImageOverlay = styled.div`
+  position: absolute;
+  left: 12px;
+  top: 18px;
+  background: #7a29fa;
+  color: #fff;
+  font-size: 1.35rem;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 10px 18px 8px 18px;
+  line-height: 1.25;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(122, 41, 250, 0.08);
+  white-space: pre-line;
 `;
 
 // 카드 상세 정보 영역 스타일
 const CardTextBox = styled.div`
   font-size: 1.05rem;
   line-height: 1.5;
-  /* margin-bottom: 18px; 제거 (gap으로 대체) */
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
@@ -198,6 +243,7 @@ const CardButtonBox = styled.div`
   padding-top: 8px;
   width: 100%;
   box-sizing: border-box;
+  gap: 20px;
 `;
 
 // 카드 하단 아이콘 버튼 스타일
@@ -213,13 +259,33 @@ const IconButton = styled.button`
   min-width: 0;
   box-sizing: border-box;
   transition: transform 0.1s ease-in-out;
-  &:not(:first-child) {
-    margin-left: auto;
-  }
-  &:not(:last-child) {
-    margin-right: 8px;
-  }
   &:active {
     transform: scale(0.95);
+  }
+`;
+
+// 자세히 보기/신청하기 버튼 스타일
+const StyledActionButton = styled.button<{ $buttonType?: ActionButtonType }>`
+  background: #6287fa;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0 26px;
+  height: 38px;
+  min-width: ${({ $buttonType }) =>
+    $buttonType === "learnMore"
+      ? "144px"
+      : $buttonType === "apply"
+      ? "144px"
+      : "110px"};
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:active {
+    transform: scale(0.97);
   }
 `;
