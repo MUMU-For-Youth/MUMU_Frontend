@@ -9,6 +9,7 @@ import ApplyButtonSvg from "../assets/buttons/ApplyButton.svg";
 import EducationDummyImage from "../assets/dummyImage/EducationDummyImage.svg";
 import UnBookmarkIcon from "../assets/icons/UnBookmarkIcon.svg";
 import BookmarkIcon from "../assets/icons/BookmarkIcon.svg";
+import CardTag from "./CardTag";
 
 // Card 컴포넌트: 교육 카드 UI를 렌더링
 const Card: React.FC = () => {
@@ -103,7 +104,7 @@ const CardContainer = styled.div`
   border-radius: 16px;
   padding: 28px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  width: 100%;
+  width: 250px;
   max-width: 500px;
   min-width: 400px;
   display: flex;
@@ -111,37 +112,15 @@ const CardContainer = styled.div`
   box-sizing: border-box;
   position: relative;
   height: 100%;
-`;
-
-// 카드 상단 태그 스타일
-const CardTag = styled.div`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #5c7cfd;
-  font-weight: 600;
-  font-size: 0.9rem;
-  border: 1.5px solid #5c7cfd;
-  border-radius: 999px;
-  padding: 0.15em 1.1em;
-  background: #fff;
-  margin-bottom: 10px;
-  letter-spacing: 0.01em;
-  box-sizing: border-box;
-  min-width: 32px;
-  min-height: 22px;
-  line-height: 1;
-  user-select: none;
-  /* 가로 길이 최소화 */
-  width: 80px;
-  max-width: 120px;
+  /* 주요 영역 간격(gap) 적용 */
+  gap: 18px;
 `;
 
 // 카드 제목 및 북마크 버튼 행 스타일
 const CardTitleRow = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
+  /* margin-bottom: 12px; 제거 (gap으로 대체) */
 `;
 
 // 카드 제목 스타일
@@ -168,7 +147,7 @@ const CardImage = styled.img`
   height: 180px;
   object-fit: cover;
   border-radius: 12px;
-  margin-bottom: 18px;
+  /* margin-bottom: 18px; 제거 (gap으로 대체) */
   background: #f3f3f3;
 `;
 
@@ -176,7 +155,7 @@ const CardImage = styled.img`
 const CardTextBox = styled.div`
   font-size: 1.05rem;
   line-height: 1.5;
-  margin-bottom: 18px;
+  /* margin-bottom: 18px; 제거 (gap으로 대체) */
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;

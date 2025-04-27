@@ -36,7 +36,8 @@ const CardFlex = styled.div`
   flex-wrap: wrap;
   gap: 20px;
   margin-top: 20px;
-  justify-content: flex-start;
+  justify-content: center;
+  align-items: center;
 
   /* 카드가 화면 끝에 닿으면 밑으로 내려감 */
   & > * {
