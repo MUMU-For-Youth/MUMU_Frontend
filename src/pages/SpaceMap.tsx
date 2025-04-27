@@ -1,16 +1,17 @@
-import React from "react";
 import styled from "styled-components";
+import NaverMap from "../components/NaverMap";
 
 const SpaceMap: React.FC = () => {
   return (
     <SpaceMapContainer>
-      <h1>공간지도</h1>
+      <NaverMap />
     </SpaceMapContainer>
   );
 };
 
 const SpaceMapContainer = styled.div`
-  padding: 20px;
+  width: 100%;
+  height: 100vh;
 `;
 
 export default SpaceMap;
