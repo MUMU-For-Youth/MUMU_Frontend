@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import styled from "styled-components";
+// 버튼, 이미지, 아이콘 등 외부 리소스 import
 import GotoMapButtonSvg from "../assets/buttons/GotoMapButton.svg";
 import LearnMoreButtonSvg from "../assets/buttons/LearnMoreButton.svg";
 import ApplyButtonSvg from "../assets/buttons/ApplyButton.svg";
@@ -9,16 +10,21 @@ import EducationDummyImage from "../assets/dummyImage/EducationDummyImage.svg";
 import UnBookmarkIcon from "../assets/icons/UnBookmarkIcon.svg";
 import BookmarkIcon from "../assets/icons/BookmarkIcon.svg";
 
+// Card 컴포넌트: 교육 카드 UI를 렌더링
 const Card: React.FC = () => {
+  // 북마크 상태 관리
   const [bookmarked, setBookmarked] = useState(false);
 
+  // 북마크 버튼 클릭 핸들러
   const handleBookmarkClick = () => {
     setBookmarked((prev) => !prev);
   };
 
   return (
     <CardContainer>
+      {/* 카드 상단 태그 (예: 취업, 교육 등) */}
       <CardTag>취업</CardTag>
+      {/* 카드 제목 및 북마크 버튼 */}
       <CardTitleRow>
         <CardTitle>감각적인 UIUX 디자인 워크숍</CardTitle>
         <BookmarkButton
@@ -33,7 +39,9 @@ const Card: React.FC = () => {
           />
         </BookmarkButton>
       </CardTitleRow>
+      {/* 카드 대표 이미지 */}
       <CardImage src={EducationDummyImage} alt="워크숍 이미지" />
+      {/* 카드 상세 정보 영역 */}
       <CardTextBox>
         <CardRow>
           <CardLabel>일시</CardLabel>
@@ -56,6 +64,7 @@ const Card: React.FC = () => {
           <CardTextRight>UXUI 입문에 관심이 있는 비전공자</CardTextRight>
         </CardRow>
       </CardTextBox>
+      {/* 카드 하단 버튼 영역 (지도, 자세히 보기, 신청하기) */}
       <CardButtonBox>
         <IconButton
           as="button"
@@ -88,6 +97,7 @@ const Card: React.FC = () => {
 
 export default Card;
 
+// 카드 전체 컨테이너 스타일
 const CardContainer = styled.div`
   background: white;
   border-radius: 16px;
@@ -103,6 +113,7 @@ const CardContainer = styled.div`
   height: 100%;
 `;
 
+// 카드 상단 태그 스타일
 const CardTag = styled.div`
   display: inline-flex;
   align-items: center;
@@ -126,18 +137,21 @@ const CardTag = styled.div`
   max-width: 120px;
 `;
 
+// 카드 제목 및 북마크 버튼 행 스타일
 const CardTitleRow = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 12px;
 `;
 
+// 카드 제목 스타일
 const CardTitle = styled.h2`
   font-size: 1.35rem;
   margin: 0;
   flex: 1;
 `;
 
+// 북마크 버튼 스타일
 const BookmarkButton = styled.button`
   background: none;
   border: none;
@@ -148,6 +162,7 @@ const BookmarkButton = styled.button`
   height: 32px;
 `;
 
+// 카드 대표 이미지 스타일
 const CardImage = styled.img`
   width: 100%;
   height: 180px;
@@ -157,6 +172,7 @@ const CardImage = styled.img`
   background: #f3f3f3;
 `;
 
+// 카드 상세 정보 영역 스타일
 const CardTextBox = styled.div`
   font-size: 1.05rem;
   line-height: 1.5;
@@ -167,12 +183,14 @@ const CardTextBox = styled.div`
   gap: 2px;
 `;
 
+// 카드 상세 정보 한 줄 스타일
 const CardRow = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 6px;
 `;
 
+// 카드 상세 정보 라벨 스타일
 const CardLabel = styled.div`
   font-weight: bold;
   min-width: 56px;
@@ -181,6 +199,7 @@ const CardLabel = styled.div`
   margin-right: 12px;
 `;
 
+// 카드 상세 정보 텍스트 스타일
 const CardText = styled.div`
   color: #222;
   font-size: 1.02rem;
@@ -192,6 +211,7 @@ const CardTextRight = styled(CardText)`
   text-align: right;
 `;
 
+// 카드 하단 버튼 영역 스타일
 const CardButtonBox = styled.div`
   display: flex;
   align-items: center;
@@ -201,6 +221,7 @@ const CardButtonBox = styled.div`
   box-sizing: border-box;
 `;
 
+// 카드 하단 아이콘 버튼 스타일
 const IconButton = styled.button`
   background: none;
   border: none;
@@ -213,15 +234,12 @@ const IconButton = styled.button`
   min-width: 0;
   box-sizing: border-box;
   transition: transform 0.1s ease-in-out;
-
   &:not(:first-child) {
     margin-left: auto;
   }
-
   &:not(:last-child) {
     margin-right: 8px;
   }
-
   &:active {
     transform: scale(0.95);
   }
