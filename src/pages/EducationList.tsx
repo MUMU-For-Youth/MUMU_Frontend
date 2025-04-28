@@ -6,29 +6,23 @@ import Card from "../components/Card";
 
 // EducationList 컴포넌트: 무료 교육 목록 페이지를 렌더링합니다.
 const EducationList: React.FC = () => {
+  // 임시 카드 데이터 개수
+  const cardCount = 8;
+  const cards = Array.from({ length: cardCount });
+
   return (
     <ScrollWrapper>
       <EducationListContainer>
         {/* 페이지 제목 */}
         <h1>무료 교육 목록</h1>
-        <CardFlex>
+        <CardGrid>
           {/* Card 컴포넌트 여러 개 렌더링 (임시 데이터) */}
-          <ResponsiveCardWrapper>
-            <Card />
-          </ResponsiveCardWrapper>
-          <ResponsiveCardWrapper>
-            <Card />
-          </ResponsiveCardWrapper>
-          <ResponsiveCardWrapper>
-            <Card />
-          </ResponsiveCardWrapper>
-          <ResponsiveCardWrapper>
-            <Card />
-          </ResponsiveCardWrapper>
-          <ResponsiveCardWrapper>
-            <Card />
-          </ResponsiveCardWrapper>
-        </CardFlex>
+          {cards.map((_, idx) => (
+            <GridCardWrapper key={idx}>
+              <Card />
+            </GridCardWrapper>
+          ))}
+        </CardGrid>
       </EducationListContainer>
     </ScrollWrapper>
   );
@@ -58,38 +52,33 @@ const EducationListContainer = styled.div`
   box-sizing: border-box;
 `;
 
-// 카드들을 flex로 배치하는 래퍼 스타일
-const CardFlex = styled.div`
-  display: flex;
-  flex-wrap: wrap;
+// 카드들을 grid로 배치하는 래퍼 스타일
+const CardGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 24px;
   margin-top: 20px;
-  justify-content: center;
-  align-items: flex-start;
-`;
-
-// 카드의 가로 길이와 내부 버튼의 유동적 크기 조절을 위한 래퍼
-const ResponsiveCardWrapper = styled.div`
-  flex: 1 1 360px;
-  max-width: 420px;
-  min-width: 320px;
-  display: flex;
-  justify-content: center;
+  justify-items: center;
+  align-items: start;
 
   @media (max-width: 900px) {
-    min-width: 80vw;
-    max-width: 88vw;
-    flex-basis: 88vw;
+    grid-template-columns: repeat(auto-fill, minmax(80vw, 1fr));
   }
 
   @media (max-width: 600px) {
-    min-width: 92vw;
-    max-width: 96vw;
-    flex-basis: 96vw;
-    padding: 0;
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
+`;
 
-  /* 카드 내부 버튼이 넘치지 않도록 카드에 강제적으로 width 100% 부여 */
+// 카드의 가로 길이와 내부 버튼의 유동적 크기 조절을 위한 래퍼
+const GridCardWrapper = styled.div`
+  width: 100%;
+  max-width: 420px;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+
   & > * {
     width: 100%;
     min-width: 0;
