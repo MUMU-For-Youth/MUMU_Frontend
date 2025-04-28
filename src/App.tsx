@@ -16,6 +16,10 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
   }
+    
+  html, body {
+    overflow: hidden;   /* 최악의 경우 body에도 */
+  }
 
   body {
     font-family: ${fonts.body};

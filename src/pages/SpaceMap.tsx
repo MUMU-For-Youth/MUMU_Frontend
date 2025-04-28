@@ -1,16 +1,21 @@
-import React from "react";
 import styled from "styled-components";
+import NaverMap from "../components/NaverMap";
+import SlidingPanel from "../components/SlidingPanel";
 
 const SpaceMap: React.FC = () => {
   return (
     <SpaceMapContainer>
-      <h1>공간지도</h1>
+      <SlidingPanel />
+      <NaverMap />
     </SpaceMapContainer>
   );
 };
 
 const SpaceMapContainer = styled.div`
-  padding: 20px;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow-y: hidden;
 `;
 
 export default SpaceMap;

@@ -82,3 +82,9 @@ export const Input = styled.input`
     border-color: ${colors.primary};
   }
 `;
+
+export const MapContainer = styled.div`
+  height: 100vh;
+  position: relative;
+  z-index: 1;
+`;
