@@ -36,6 +36,8 @@ const PanelContainer = styled.div<{ isOpen: boolean }>`
   width: 350px;
   height: 100vh;
   background-color: ${colors.secondary};
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
   position: absolute;
   top: 0;
   left: ${({ isOpen }) => (isOpen ? "0" : "-350px")};
