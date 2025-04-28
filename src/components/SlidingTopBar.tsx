@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 
 // 탭 정보 배열
@@ -20,8 +20,14 @@ const SlidingTopBar: React.FC<SlidingTopBarProps> = ({
   // 현재 선택된 탭 상태
   const [selectedTab, setSelectedTab] = useState(initialTab);
 
+  // 외부에서 initialTab이 바뀌면 selectedTab도 동기화
+  useEffect(() => {
+    setSelectedTab(initialTab);
+  }, [initialTab]);
+
   // 탭 클릭 시 처리 함수
   const handleTabClick = (key: string) => {
+    if (selectedTab === key) return; // 이미 선택된 탭이면 무시
     setSelectedTab(key); // 선택된 탭 상태 변경
     if (onTabChange) onTabChange(key); // 콜백 함수가 있으면 호출
   };
@@ -29,15 +35,15 @@ const SlidingTopBar: React.FC<SlidingTopBarProps> = ({
   return (
     <BarContainer>
       <TabWrapper>
-        {/* 탭 배열을 순회하며 버튼 렌더링 */}
         {TABS.map((tab) => (
           <TabButton
             key={tab.key}
+            type="button"
             active={selectedTab === tab.key}
             onClick={() => handleTabClick(tab.key)}
+            tabIndex={0}
           >
             {tab.label}
-            {/* 현재 선택된 탭에만 하단 바 표시 */}
             {selectedTab === tab.key && <ActiveBar />}
           </TabButton>
         ))}
@@ -57,7 +63,7 @@ const BarContainer = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
-  z-index: -20;
+  z-index: 20;
   left: 0;
   margin: 0;
   padding: 0;
@@ -88,8 +94,8 @@ const TabButton = styled.button<{ active: boolean }>`
   cursor: pointer;
   transition: color 0.2s;
   margin: 0 2px;
+  z-index: 1;
 
-  // 활성화된 탭에만 적용되는 스타일
   ${({ active }) =>
     active &&
     css`
@@ -97,12 +103,10 @@ const TabButton = styled.button<{ active: boolean }>`
       box-shadow: 0 2px 8px 0 rgba(91, 124, 250, 0.08);
     `}
 
-  // 마우스 오버 시 배경색 변경
   &:hover {
     background: #f5f7fd;
   }
 
-  // 모바일 환경에서의 스타일 조정
   @media (max-width: 600px) {
     min-width: 120px;
     font-size: 0.98rem;
@@ -120,6 +124,7 @@ const ActiveBar = styled.div`
   border-radius: 2px 2px 0 0;
   background: #5b7cfa;
   transition: all 0.2s;
+  z-index: 2;
 `;
 
 export default SlidingTopBar;
