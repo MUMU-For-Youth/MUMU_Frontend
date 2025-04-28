@@ -57,7 +57,7 @@ const BarContainer = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
-  z-index: 10;
+  z-index: -20;
   left: 0;
   margin: 0;
   padding: 0;

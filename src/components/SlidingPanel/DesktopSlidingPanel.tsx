@@ -30,7 +30,6 @@ const Wrapper = styled.div`
   top: 0;
   left: 0;
   height: 100vh;
-  z-index: 120;
 `;
 
 const PanelContainer = styled.div<{ isOpen: boolean }>`
@@ -43,7 +42,7 @@ const PanelContainer = styled.div<{ isOpen: boolean }>`
   top: 0;
   left: ${({ isOpen }) => (isOpen ? "0" : "-350px")};
   transition: left 0.3s ease;
-  z-index: 121;
+  z-index: 5;
 `;
 
 const PanelToggle = styled.button<{ isOpen: boolean }>`
@@ -58,7 +57,7 @@ const PanelToggle = styled.button<{ isOpen: boolean }>`
   border-radius: 0 20px 20px 0;
   box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  z-index: 122;
+  z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;
