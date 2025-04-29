@@ -14,16 +14,19 @@ const Mypage: React.FC = () => {
 
   return (
     <MypageContainer>
+      {/* SlidingPanel이 TopBar보다 위에 오도록 TopBar를 Panel 아래에 둠 */}
+      <StyledSlidingPanelWrapper>
+        <StyledSlidingPanel
+          content={
+            <>
+              <CalendarComponent />
+            </>
+          }
+        />
+      </StyledSlidingPanelWrapper>
       <StyledTopBarWrapper>
         <SlidingTopBar />
       </StyledTopBarWrapper>
-      <SlidingPanel
-        content={
-          <>
-            <CalendarComponent />
-          </>
-        }
-      />
       <CardsGrid>
         {cards.map((_, idx) => (
           <Card key={idx} />
@@ -45,6 +48,18 @@ const MypageContainer = styled.div`
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
+`;
+
+// SlidingPanel이 TopBar보다 위에 오도록 z-index를 더 높게 설정
+const StyledSlidingPanelWrapper = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 30;
+`;
+
+const StyledSlidingPanel = styled(SlidingPanel)`
+  z-index: 30;
+  position: relative;
 `;
 
 const StyledTopBarWrapper = styled.div`
