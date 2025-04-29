@@ -2,14 +2,15 @@ import React from "react";
 import styled from "styled-components";
 import { useAuthStore } from "../store/useAuthStore";
 import SlidingPanel from "../components/SlidingPanel";
+import SlidingTopBar from "../components/SlidingTopBar";
 
 const Mypage: React.FC = () => {
   const { user } = useAuthStore();
 
   return (
     <MypageContainer>
+      <SlidingTopBar />
       <SlidingPanel />
-      <h1>마이페이지</h1>
     </MypageContainer>
   );
 };
