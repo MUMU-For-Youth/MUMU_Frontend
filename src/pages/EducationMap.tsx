@@ -1,11 +1,13 @@
 import styled from "styled-components";
 import NaverMap from "../components/NaverMap";
 import SlidingPanel from "../components/SlidingPanel";
+//import Dropdown from "../components/Dropdown/Dropdown";
 
 const EducationMap: React.FC = () => {
   return (
     <EducationMapContainer>
       <SlidingPanel />
+      {/* <Dropdown /> */}
       <NaverMap />
     </EducationMapContainer>
   );
