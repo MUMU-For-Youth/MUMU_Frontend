@@ -43,6 +43,8 @@ const PanelContainer = styled.div<{ isOpen: boolean }>`
   left: ${({ isOpen }) => (isOpen ? "0" : "-350px")};
   transition: left 0.3s ease;
   z-index: 5;
+  display: flex;
+  flex-direction: column;
 `;
 
 const PanelToggle = styled.button<{ isOpen: boolean }>`
@@ -67,6 +69,8 @@ const PanelToggle = styled.button<{ isOpen: boolean }>`
 const Content = styled.div`
   padding: 20px;
   color: white;
+  flex: 1 1 auto;
+  overflow-y: auto;
 `;
 
 export default DesktopSlidingPanel;
