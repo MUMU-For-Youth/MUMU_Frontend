@@ -104,7 +104,7 @@ const Card: React.FC = () => {
         </CardRow>
       </CardTextBox>
       {/* 카드 하단 버튼 영역 (지도, 자세히 보기, 신청하기) */}
-      <CardButtonBox>
+      <CardButtonContainer>
         <IconButton
           as="button"
           type="button"
@@ -115,7 +115,7 @@ const Card: React.FC = () => {
         </IconButton>
         <ActionButton type="learnMore" onClick={handleLearnMore} />
         <ActionButton type="apply" onClick={handleApply} />
-      </CardButtonBox>
+      </CardButtonContainer>
     </CardContainer>
   );
 };
@@ -235,15 +235,15 @@ const CardTextRight = styled(CardText)`
   text-align: right;
 `;
 
-// 카드 하단 버튼 영역 스타일
-const CardButtonBox = styled.div`
+// 카드 하단 버튼 영역 스타일 (space-between, gap 없음)
+const CardButtonContainer = styled.div`
   display: flex;
   align-items: center;
   margin-top: auto;
   padding-top: 8px;
   width: 100%;
   box-sizing: border-box;
-  gap: 20px;
+  justify-content: space-between;
 `;
 
 // 카드 하단 아이콘 버튼 스타일
@@ -272,7 +272,6 @@ const StyledActionButton = styled.button<{ $buttonType?: ActionButtonType }>`
   border-radius: 999px;
   font-size: 1rem;
   font-weight: 600;
-  padding: 0 26px;
   height: 38px;
   min-width: ${({ $buttonType }) =>
     $buttonType === "learnMore"
