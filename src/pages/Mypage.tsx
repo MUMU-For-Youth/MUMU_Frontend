@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useAuthStore } from "../store/useAuthStore";
 import SlidingPanel from "../components/SlidingPanel";
 import CalendarComponent from "../components/Calendar/CalendarComponent";
+import SlidingTopBar from "../components/SlidingTopBar";
 
 const Mypage: React.FC = () => {
   const { user } = useAuthStore();
@@ -16,7 +17,8 @@ const Mypage: React.FC = () => {
           </>
         }
       />
-      <h1>마이페이지</h1>
+      <SlidingTopBar />
+      <SlidingPanel />
     </MypageContainer>
   );
 };
