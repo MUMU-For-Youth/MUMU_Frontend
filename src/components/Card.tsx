@@ -1,24 +1,22 @@
-// components/Card.tsx
+// Card 컴포넌트: 교육 카드 UI (북마크, 상세정보, 지도, 신청 등 포함)
 
 import React, { useState } from "react";
 import styled from "styled-components";
-// 버튼, 이미지, 아이콘 등 외부 리소스 import
 import GotoMapButtonSvg from "../assets/buttons/GotoMapButton.svg";
 import EducationDummyImage from "../assets/dummyImage/EducationDummyImage.svg";
 import UnBookmarkIcon from "../assets/icons/UnBookmarkIcon.svg";
 import BookmarkIcon from "../assets/icons/BookmarkIcon.svg";
 import CardTag from "./CardTag";
 
-// 자세히 보기/신청하기 버튼 타입 정의
+// ActionButton 타입 정의
 type ActionButtonType = "learnMore" | "apply";
 
+// ActionButton 컴포넌트: 자세히 보기/신청하기 버튼
 interface ActionButtonProps {
   type: ActionButtonType;
   onClick?: () => void;
 }
-
 const ActionButton: React.FC<ActionButtonProps> = ({ type, onClick }) => {
-  // 버튼별 텍스트 및 스타일 분기
   const isLearnMore = type === "learnMore";
   return (
     <StyledActionButton
@@ -32,36 +30,34 @@ const ActionButton: React.FC<ActionButtonProps> = ({ type, onClick }) => {
   );
 };
 
-// Card 컴포넌트: 교육 카드 UI를 렌더링
+// Card 컴포넌트 본문
 const Card: React.FC = () => {
-  // 북마크 상태 관리
+  // 북마크 상태
   const [bookmarked, setBookmarked] = useState(false);
 
   // 북마크 버튼 클릭 핸들러
   const handleBookmarkClick = () => {
-    if (!bookmarked) {
-      setBookmarked(true);
-      alert("북마크 했습니다");
-    } else {
-      setBookmarked(false);
-      alert("북마크를 해제했습니다");
-    }
+    setBookmarked((prev) => {
+      alert(!prev ? "북마크 했습니다" : "북마크를 해제했습니다");
+      return !prev;
+    });
   };
 
-  // 각 버튼 클릭 핸들러 예시
+  // 자세히 보기 버튼 클릭 핸들러
   const handleLearnMore = () => {
     alert("자세히 보기 클릭!");
   };
 
+  // 신청하기 버튼 클릭 핸들러
   const handleApply = () => {
     alert("신청하기 클릭!");
   };
 
   return (
     <CardContainer>
-      {/* 카드 상단 태그 (예: 취업, 교육 등) */}
+      {/* 상단 태그 */}
       <CardTag>취업</CardTag>
-      {/* 카드 제목 및 북마크 버튼 */}
+      {/* 제목 + 북마크 */}
       <CardTitleRow>
         <CardTitle>감각적인 UIUX 디자인 워크숍</CardTitle>
         <BookmarkButton
@@ -76,11 +72,11 @@ const Card: React.FC = () => {
           />
         </BookmarkButton>
       </CardTitleRow>
-      {/* 카드 대표 이미지 + 오버레이 텍스트 */}
+      {/* 대표 이미지 */}
       <ImageWrapper>
         <CardImage src={EducationDummyImage} alt="워크숍 이미지" />
       </ImageWrapper>
-      {/* 카드 상세 정보 영역 */}
+      {/* 상세 정보 */}
       <CardTextBox>
         <CardRow>
           <CardLabel>일시</CardLabel>
@@ -103,14 +99,9 @@ const Card: React.FC = () => {
           <CardTextRight>UXUI 입문에 관심이 있는 비전공자</CardTextRight>
         </CardRow>
       </CardTextBox>
-      {/* 카드 하단 버튼 영역 (지도, 자세히 보기, 신청하기) */}
+      {/* 하단 버튼 영역 */}
       <CardButtonContainer>
-        <IconButton
-          as="button"
-          type="button"
-          tabIndex={0}
-          aria-label="지도보기"
-        >
+        <IconButton type="button" aria-label="지도보기">
           <img src={GotoMapButtonSvg} alt="지도보기" />
         </IconButton>
         <ButtonGroup>
@@ -124,37 +115,51 @@ const Card: React.FC = () => {
 
 export default Card;
 
-// 카드 전체 컨테이너 스타일
+// ================== styled-components ==================
+
+// 카드 전체 컨테이너
 const CardContainer = styled.div`
   background: white;
   border-radius: 16px;
-  padding: 28px;
+  padding: 32px 24px 32px 24px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  width: 250px;
-  max-width: 450px;
+  max-width: 440px;
   min-width: 400px;
-  min-height: 560px; /* 카드의 최소 높이 증가로 버튼 겹침 방지 */
+  min-height: 560px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   position: relative;
   gap: 18px;
+
+  @media (max-width: 600px) {
+    max-width: 98vw;
+    min-width: 0;
+    width: 100%;
+    padding: 18px 12px 24px 12px;
+    gap: 14px;
+  }
 `;
 
-// 카드 제목 및 북마크 버튼 행 스타일
+// 제목 + 북마크 버튼 행
 const CardTitleRow = styled.div`
   display: flex;
   align-items: center;
 `;
 
-// 카드 제목 스타일
+// 카드 제목
 const CardTitle = styled.h2`
   font-size: 1.35rem;
   margin: 0;
   flex: 1;
+  color: #222;
+
+  @media (max-width: 600px) {
+    color: #111;
+  }
 `;
 
-// 북마크 버튼 스타일
+// 북마크 버튼
 const BookmarkButton = styled.button`
   background: none;
   border: none;
@@ -165,42 +170,32 @@ const BookmarkButton = styled.button`
   height: 32px;
 `;
 
-// 카드 대표 이미지 + 오버레이 텍스트 래퍼
+// 대표 이미지 래퍼
 const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
   height: 180px;
   display: flex;
   align-items: stretch;
+  overflow: hidden;
+
+  @media (max-width: 600px) {
+    height: 130px;
+    border-radius: 10px;
+  }
 `;
 
-// 카드 대표 이미지 스타일
+// 대표 이미지
 const CardImage = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 12px;
   background: #f3f3f3;
+  display: block;
 `;
 
-// 이미지 오버레이 텍스트 스타일
-const ImageOverlay = styled.div`
-  position: absolute;
-  left: 12px;
-  top: 18px;
-  background: #7a29fa;
-  color: #fff;
-  font-size: 1.35rem;
-  font-weight: 700;
-  border-radius: 8px;
-  padding: 10px 18px 8px 18px;
-  line-height: 1.25;
-  z-index: 2;
-  box-shadow: 0 2px 8px rgba(122, 41, 250, 0.08);
-  white-space: pre-line;
-`;
-
-// 카드 상세 정보 영역 스타일
+// 상세 정보 영역
 const CardTextBox = styled.div`
   font-size: 1.05rem;
   line-height: 1.5;
@@ -208,41 +203,59 @@ const CardTextBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
+
+  @media (max-width: 600px) {
+    padding: 2px;
+  }
 `;
 
-// 카드 상세 정보 한 줄 스타일
+// 상세 정보 한 줄
 const CardRow = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 6px;
+
+  @media (max-width: 600px) {
+    margin-bottom: 4px;
+  }
 `;
 
-// 카드 상세 정보 라벨 스타일
+// 상세 정보 라벨
 const CardLabel = styled.div`
   font-weight: bold;
   min-width: 56px;
   color: #b0b0b0;
   font-size: 1.02rem;
   margin-right: 12px;
+
+  @media (max-width: 600px) {
+    min-width: 48px;
+    font-size: 0.98rem;
+    margin-right: 8px;
+  }
 `;
 
-// 카드 상세 정보 텍스트 스타일
+// 상세 정보 텍스트
 const CardText = styled.div`
   color: #222;
   font-size: 1.02rem;
   flex: 1;
+
+  @media (max-width: 600px) {
+    font-size: 0.98rem;
+  }
 `;
 
-// 오른쪽 정렬 CardText
+// 오른쪽 정렬 텍스트
 const CardTextRight = styled(CardText)`
   text-align: right;
 `;
 
-// 카드 하단 버튼 영역 스타일 (일렬로, space-between, 모바일에서 하단 고정)
+// 하단 버튼 영역
 const CardButtonContainer = styled.div`
   display: flex;
   align-items: center;
-  margin-top: auto;
+  margin-top: 28px;
   padding-top: 8px;
   width: 100%;
   box-sizing: border-box;
@@ -250,14 +263,10 @@ const CardButtonContainer = styled.div`
   gap: 0;
 
   @media (max-width: 600px) {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    padding: 16px 16px 16px 16px;
-    background: white;
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
+    position: static;
+    padding: 12px 0 0 0;
+    background: transparent;
+    border-radius: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -266,7 +275,7 @@ const CardButtonContainer = styled.div`
   }
 `;
 
-// 버튼 그룹 (자세히 보기/신청하기) 스타일
+// 버튼 그룹 (자세히 보기/신청하기)
 const ButtonGroup = styled.div`
   display: flex;
   gap: 12px;
@@ -278,7 +287,7 @@ const ButtonGroup = styled.div`
   }
 `;
 
-// 카드 하단 아이콘 버튼 스타일
+// 하단 아이콘 버튼 (지도)
 const IconButton = styled.button`
   background: none;
   border: none;
@@ -287,7 +296,7 @@ const IconButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 38px; /* 버튼 높이 줄임 */
+  height: 38px;
   min-width: 0;
   box-sizing: border-box;
   transition: transform 0.1s ease-in-out;
@@ -301,7 +310,7 @@ const IconButton = styled.button`
   }
 `;
 
-// 자세히 보기/신청하기 버튼 스타일
+// 자세히 보기/신청하기 버튼
 const StyledActionButton = styled.button<{ $buttonType?: ActionButtonType }>`
   background: #6287fa;
   color: #fff;
@@ -309,7 +318,7 @@ const StyledActionButton = styled.button<{ $buttonType?: ActionButtonType }>`
   border-radius: 999px;
   font-size: 1rem;
   font-weight: 600;
-  height: 34px; /* 버튼 높이 줄임 */
+  height: 34px;
   min-width: ${({ $buttonType }) =>
     $buttonType === "learnMore"
       ? "140px"
@@ -330,6 +339,6 @@ const StyledActionButton = styled.button<{ $buttonType?: ActionButtonType }>`
     flex: 1;
     font-size: 0.98rem;
     padding: 0 8px;
-    height: 32px; /* 모바일에서 버튼 높이도 줄임 */
+    height: 32px;
   }
 `;
