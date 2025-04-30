@@ -14,9 +14,11 @@ export interface ApiResponse<T> {
   status: number;
 }
 
+export const baseURL = process.env.REACT_APP_API_BASE_URL;
+
 // Axios 인스턴스 생성
 const api: AxiosInstance = axios.create({
-  baseURL: process.env.API_BASE_URL,
+  baseURL: process.env.REACT_APP_API_BASE_URL,
   timeout: 10000,
   withCredentials: true, // 쿠키 기반 refresh를 쓸 경우 필요
 });
@@ -34,7 +36,7 @@ api.interceptors.request.use((config) => {
 async function refreshAccessToken(): Promise<string | null> {
   try {
     const res = await axios.post(
-      `${process.env.API_BASE_URL}/auth/refresh`,
+      `${process.env.REACT_APP_API_BASE_URL}/auth/refresh`,
       {},
       { withCredentials: true } // <- refreshToken이 쿠키인 경우 필요
     );
