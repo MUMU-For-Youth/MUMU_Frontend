@@ -131,9 +131,9 @@ const CardContainer = styled.div`
   padding: 28px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   width: 250px;
-  max-width: 500px;
+  max-width: 450px;
   min-width: 400px;
-  min-height: 520px; /* 카드의 최소 높이 증가로 버튼 겹침 방지 */
+  min-height: 560px; /* 카드의 최소 높이 증가로 버튼 겹침 방지 */
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
