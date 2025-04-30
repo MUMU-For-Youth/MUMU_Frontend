@@ -90,12 +90,22 @@ const PanelToggle = styled.button<{ isOpen: boolean }>`
 // 패널 내부 컨텐츠 영역
 const Content = styled.div`
   padding: 0;
+  justify-content: center;
+  align-items: center;
   flex: 1 auto;
   overflow-y: auto;
   min-width: 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
+
+  /* 스크롤바 숨기기 (크로스 브라우저) */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 `;
 
 export default DesktopSlidingPanel;
