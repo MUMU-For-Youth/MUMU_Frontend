@@ -13,25 +13,30 @@ type ActionButtonType = "learnMore" | "apply";
 
 // ActionButton 컴포넌트: 자세히 보기/신청하기 버튼
 interface ActionButtonProps {
+  text?: string;
   type: ActionButtonType;
   onClick?: () => void;
 }
-const ActionButton: React.FC<ActionButtonProps> = ({ type, onClick }) => {
+const ActionButton: React.FC<ActionButtonProps> = ({ text, type, onClick }) => {
   const isLearnMore = type === "learnMore";
   return (
     <StyledActionButton
       type="button"
-      aria-label={isLearnMore ? "자세히 보기" : "신청하기"}
+      aria-label={isLearnMore ? "자세히 보기" : text}
       onClick={onClick}
       $buttonType={type}
     >
-      {isLearnMore ? "자세히 보기" : "신청하기"}
+      {isLearnMore ? "자세히 보기" : text}
     </StyledActionButton>
   );
 };
 
+interface CardProps {
+  type: string;
+}
+
 // Card 컴포넌트 본문
-const Card: React.FC = () => {
+const Card: React.FC<CardProps> = ({ type }) => {
   // 북마크 상태
   const [bookmarked, setBookmarked] = useState(false);
 
@@ -107,7 +112,11 @@ const Card: React.FC = () => {
           </IconButton>
           <ButtonGroup>
             <ActionButton type="learnMore" onClick={handleLearnMore} />
-            <ActionButton type="apply" onClick={handleApply} />
+            <ActionButton
+              type="apply"
+              text={type === "education" ? "신청하기" : "예약하기"}
+              onClick={handleApply}
+            />
           </ButtonGroup>
         </CardButtonContainer>
       </CardContainer>
@@ -227,7 +236,7 @@ const CardTextBox = styled.div`
 // 상세 정보 한 줄
 const CardRow = styled.div`
   display: flex;
-  align-items: center;
+  align-items: start;
   margin-bottom: 6px;
 
   @media (max-width: 600px) {

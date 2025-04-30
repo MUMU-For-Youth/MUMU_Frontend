@@ -13,7 +13,7 @@ const SpaceList: React.FC = () => {
         <CardGrid>
           {cards.map((_, idx) => (
             <GridCardWrapper key={idx}>
-              <Card />
+              <Card type="space" />
             </GridCardWrapper>
           ))}
         </CardGrid>

@@ -18,10 +18,10 @@ const EducationMap: React.FC = () => {
           <CardListWrapper>
             <CardList>
               {/* 교육 카드 예시 (실제 데이터로 대체 가능) */}
-              <Card />
-              <Card />
-              <Card />
-              <Card />
+              <Card type="space" />
+              <Card type="space" />
+              <Card type="space" />
+              <Card type="space" />
               {/* 필요시 더 추가 */}
             </CardList>
           </CardListWrapper>

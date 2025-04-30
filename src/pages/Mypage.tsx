@@ -28,9 +28,9 @@ const Mypage: React.FC = () => {
         <SlidingTopBar />
       </StyledTopBarWrapper>
       <CardsGrid>
-        {cards.map((_, idx) => (
-          <Card key={idx} />
-        ))}
+        <Card type="space" />
+        <Card type="space" />
+        <Card type="space" />
       </CardsGrid>
     </MypageContainer>
   );
