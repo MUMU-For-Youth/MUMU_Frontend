@@ -113,8 +113,10 @@ const Card: React.FC = () => {
         >
           <img src={GotoMapButtonSvg} alt="지도보기" />
         </IconButton>
-        <ActionButton type="learnMore" onClick={handleLearnMore} />
-        <ActionButton type="apply" onClick={handleApply} />
+        <ButtonGroup>
+          <ActionButton type="learnMore" onClick={handleLearnMore} />
+          <ActionButton type="apply" onClick={handleApply} />
+        </ButtonGroup>
       </CardButtonContainer>
     </CardContainer>
   );
@@ -131,6 +133,7 @@ const CardContainer = styled.div`
   width: 250px;
   max-width: 500px;
   min-width: 400px;
+  min-height: 520px; /* 카드의 최소 높이 증가로 버튼 겹침 방지 */
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -235,7 +238,7 @@ const CardTextRight = styled(CardText)`
   text-align: right;
 `;
 
-// 카드 하단 버튼 영역 스타일 (space-between, gap 없음)
+// 카드 하단 버튼 영역 스타일 (일렬로, space-between, 모바일에서 하단 고정)
 const CardButtonContainer = styled.div`
   display: flex;
   align-items: center;
@@ -244,6 +247,35 @@ const CardButtonContainer = styled.div`
   width: 100%;
   box-sizing: border-box;
   justify-content: space-between;
+  gap: 0;
+
+  @media (max-width: 600px) {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 16px 16px 16px 16px;
+    background: white;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0;
+  }
+`;
+
+// 버튼 그룹 (자세히 보기/신청하기) 스타일
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 12px;
+
+  @media (max-width: 600px) {
+    flex: 1;
+    gap: 10px;
+    justify-content: flex-end;
+  }
 `;
 
 // 카드 하단 아이콘 버튼 스타일
@@ -255,12 +287,17 @@ const IconButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 44px;
+  height: 38px; /* 버튼 높이 줄임 */
   min-width: 0;
   box-sizing: border-box;
   transition: transform 0.1s ease-in-out;
   &:active {
     transform: scale(0.95);
+  }
+
+  @media (max-width: 600px) {
+    margin-right: 10px;
+    flex-shrink: 0;
   }
 `;
 
@@ -272,13 +309,13 @@ const StyledActionButton = styled.button<{ $buttonType?: ActionButtonType }>`
   border-radius: 999px;
   font-size: 1rem;
   font-weight: 600;
-  height: 38px;
+  height: 34px; /* 버튼 높이 줄임 */
   min-width: ${({ $buttonType }) =>
     $buttonType === "learnMore"
-      ? "144px"
+      ? "140px"
       : $buttonType === "apply"
-      ? "144px"
-      : "110px"};
+      ? "140px"
+      : "90px"};
   cursor: pointer;
   transition: background 0.15s, color 0.15s, transform 0.1s;
   display: flex;
@@ -286,5 +323,13 @@ const StyledActionButton = styled.button<{ $buttonType?: ActionButtonType }>`
   justify-content: center;
   &:active {
     transform: scale(0.97);
+  }
+
+  @media (max-width: 600px) {
+    min-width: 0;
+    flex: 1;
+    font-size: 0.98rem;
+    padding: 0 8px;
+    height: 32px; /* 모바일에서 버튼 높이도 줄임 */
   }
 `;
