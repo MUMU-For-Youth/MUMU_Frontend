@@ -303,7 +303,7 @@ const CardButtonContainer = styled.div`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    gap: 0;
+    gap: 10px;
   }
 `;
 
@@ -337,7 +337,7 @@ const StyledActionButton = styled.button<{ $buttonType?: ActionButtonType }>`
   border: none;
   border-radius: 999px;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   height: 34px;
   min-width: ${({ $buttonType }) =>
     $buttonType === "learnMore"
@@ -360,5 +360,6 @@ const StyledActionButton = styled.button<{ $buttonType?: ActionButtonType }>`
     font-size: 0.98rem;
     padding: 0 8px;
     height: 32px;
+    gap: 20px;
   }
 `;
