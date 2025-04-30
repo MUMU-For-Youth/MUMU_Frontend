@@ -90,7 +90,7 @@ const PanelToggle = styled.button<{ isOpen: boolean }>`
 // 패널 내부 컨텐츠 영역
 const Content = styled.div`
   padding: 0;
-  flex: 1 1 auto;
+  flex: 1 auto;
   overflow-y: auto;
   min-width: 0;
   min-height: 0;

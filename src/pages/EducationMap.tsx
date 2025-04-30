@@ -3,46 +3,71 @@ import NaverMap from "../components/NaverMap";
 import SlidingPanel from "../components/SlidingPanel";
 import Card from "../components/Card";
 
-// SlidingPanel이 children을 받지 않는 구조라면,
-// SlidingPanel 내부에서 CardList를 직접 렌더링하도록 SlidingPanel의 content(혹은 비슷한 prop) 사용
-// 카드 형태(크기)는 그대로 유지
-
+/**
+ * EducationMap 페이지
+ * - 좌측에 SlidingPanel(교육 카드 리스트), 우측에 NaverMap(지도) 표시
+ * - SlidingPanel은 content prop을 통해 카드 리스트를 전달받음
+ * - CardList는 패널 내부에서 최대한 많은 영역을 차지하며 스크롤 가능
+ */
 const EducationMap: React.FC = () => {
   return (
     <EducationMapContainer>
       <SlidingPanel
-        // SlidingPanel 내부에 CardList를 content prop 등으로 전달
+        // CardListWrapper로 감싸서 패널 내부에서 CardList가 100% 영역을 차지하도록 함
         content={
-          <CardList>
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            {/* 필요시 더 추가 */}
-          </CardList>
+          <CardListWrapper>
+            <CardList>
+              {/* 교육 카드 예시 (실제 데이터로 대체 가능) */}
+              <Card />
+              <Card />
+              <Card />
+              <Card />
+              {/* 필요시 더 추가 */}
+            </CardList>
+          </CardListWrapper>
         }
       />
+      {/* 지도 영역 */}
       <NaverMap />
     </EducationMapContainer>
   );
 };
 
-// 패널 안에서 세로 스크롤이 가능하고, 카드가 잘리지 않게 함
+/**
+ * CardListWrapper
+ * - SlidingPanel 내부에서 CardList가 최대한 많은 영역을 차지하도록 하는 래퍼
+ */
+const CardListWrapper = styled.div`
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+`;
+
+/**
+ * CardList
+ * - 카드들을 세로로 나열, 스크롤 가능
+ * - 스크롤바는 숨김 처리
+ */
 const CardList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 24px 8px 32px 8px;
+  padding: 24px 8px 24px 8px;
   overflow-y: auto;
-  max-height: 80vh; /* 패널 높이에 맞게 조정 */
+  height: 100%;
   min-height: 0;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
   &::-webkit-scrollbar {
-    display: none;
+    display: none; /* Chrome, Safari, Opera */
   }
 `;
 
+/**
+ * EducationMapContainer
+ * - 전체 페이지 컨테이너, 100vw/100vh 사용
+ */
 const EducationMapContainer = styled.div`
   width: 100%;
   height: 100vh;
