@@ -125,8 +125,8 @@ const CardOuter = styled.div`
   background: transparent;
 
   @media (max-width: 600px) {
-    padding: 10px 6px 14px 6px; /* 모바일에서 카드 간격을 줄임 */
-    border-radius: 14px;
+    padding: 20px 12px 28px 12px;
+    border-radius: 18px;
   }
 `;
 
@@ -149,9 +149,9 @@ const CardContainer = styled.div`
     max-width: 98vw;
     min-width: 0;
     width: 100%;
-    padding: 32px 12px 28px 12px; /* 모바일에서 카드 내부 패딩도 줄임 */
-    gap: 12px; /* 모바일에서 카드 내부 요소 간격도 줄임 */
-    border-radius: 14px;
+    padding: 28px 18px 28px 18px; /* 모바일에서 카드 내부 패딩을 더 크게 */
+    gap: 16px;
+    border-radius: 18px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
 `;
@@ -195,8 +195,8 @@ const ImageWrapper = styled.div`
   overflow: hidden;
 
   @media (max-width: 600px) {
-    height: 110px; /* 모바일에서 이미지 높이도 살짝 줄임 */
-    border-radius: 8px;
+    height: 130px;
+    border-radius: 10px;
   }
 `;
 
@@ -231,7 +231,7 @@ const CardRow = styled.div`
   margin-bottom: 6px;
 
   @media (max-width: 600px) {
-    margin-bottom: 3px;
+    margin-bottom: 4px;
   }
 `;
 
@@ -279,7 +279,7 @@ const CardButtonContainer = styled.div`
 
   @media (max-width: 600px) {
     position: static;
-    padding: 10px 0 0 0; /* 모바일에서 위쪽 패딩 줄임 */
+    padding: 16px 0 0 0;
     background: transparent;
     border-radius: 0;
     display: flex;
@@ -287,7 +287,6 @@ const CardButtonContainer = styled.div`
     align-items: center;
     justify-content: space-between;
     gap: 0;
-    margin-top: 14px; /* 모바일에서 카드 하단 버튼 영역 위 여백 줄임 */
   }
 `;
 
@@ -298,7 +297,7 @@ const ButtonGroup = styled.div`
 
   @media (max-width: 600px) {
     flex: 1;
-    gap: 8px; /* 모바일에서 버튼 간격도 줄임 */
+    gap: 10px;
     justify-content: flex-end;
   }
 `;
@@ -321,7 +320,7 @@ const IconButton = styled.button`
   }
 
   @media (max-width: 600px) {
-    margin-right: 8px;
+    margin-right: 10px;
     flex-shrink: 0;
   }
 `;
