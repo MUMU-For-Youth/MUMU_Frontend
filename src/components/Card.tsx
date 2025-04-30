@@ -60,66 +60,66 @@ const Card: React.FC<CardProps> = ({ type }) => {
 
   return (
     <CardOuter>
-      <CardContainer>
-        {/* 상단 태그 */}
-        <CardTag>취업</CardTag>
-        {/* 제목 + 북마크 */}
-        <CardTitleRow>
-          <CardTitle>감각적인 UIUX 디자인 워크숍</CardTitle>
-          <BookmarkButton
-            type="button"
-            aria-label={bookmarked ? "북마크 해제" : "북마크"}
-            onClick={handleBookmarkClick}
-          >
-            <img
-              src={bookmarked ? BookmarkIcon : UnBookmarkIcon}
-              alt={bookmarked ? "북마크됨" : "북마크"}
-              style={{ width: 28, height: 28 }}
-            />
-          </BookmarkButton>
-        </CardTitleRow>
-        {/* 대표 이미지 */}
-        <ImageWrapper>
-          <CardImage src={EducationDummyImage} alt="워크숍 이미지" />
-        </ImageWrapper>
-        {/* 상세 정보 */}
-        <CardTextBox>
-          <CardRow>
-            <CardLabel>일시</CardLabel>
-            <CardTextRight>2025.04.22(화)</CardTextRight>
-          </CardRow>
-          <CardRow>
-            <CardLabel>방식</CardLabel>
-            <CardTextRight>오프라인</CardTextRight>
-          </CardRow>
-          <CardRow>
-            <CardLabel>주소</CardLabel>
-            <CardTextRight>서울특별시 용산구</CardTextRight>
-          </CardRow>
-          <CardRow>
-            <CardLabel>일정</CardLabel>
-            <CardTextRight>10:00~12:00, 12:00~18:00</CardTextRight>
-          </CardRow>
-          <CardRow>
-            <CardLabel>대상</CardLabel>
-            <CardTextRight>UXUI 입문에 관심이 있는 비전공자</CardTextRight>
-          </CardRow>
-        </CardTextBox>
-        {/* 하단 버튼 영역 */}
-        <CardButtonContainer>
-          <IconButton type="button" aria-label="지도보기">
-            <img src={GotoMapButtonSvg} alt="지도보기" />
-          </IconButton>
-          <ButtonGroup>
+      <CardCenterWrapper>
+        <CardContainer>
+          {/* 상단 태그 */}
+          <CardTag>취업</CardTag>
+          {/* 제목 + 북마크 */}
+          <CardTitleRow>
+            <CardTitle>감각적인 UIUX 디자인 워크숍</CardTitle>
+            <BookmarkButton
+              type="button"
+              aria-label={bookmarked ? "북마크 해제" : "북마크"}
+              onClick={handleBookmarkClick}
+            >
+              <img
+                src={bookmarked ? BookmarkIcon : UnBookmarkIcon}
+                alt={bookmarked ? "북마크됨" : "북마크"}
+                style={{ width: 28, height: 28 }}
+              />
+            </BookmarkButton>
+          </CardTitleRow>
+          {/* 대표 이미지 */}
+          <ImageWrapper>
+            <CardImage src={EducationDummyImage} alt="워크숍 이미지" />
+          </ImageWrapper>
+          {/* 상세 정보 */}
+          <CardTextBox>
+            <CardRow>
+              <CardLabel>일시</CardLabel>
+              <CardTextRight>2025.04.22(화)</CardTextRight>
+            </CardRow>
+            <CardRow>
+              <CardLabel>방식</CardLabel>
+              <CardTextRight>오프라인</CardTextRight>
+            </CardRow>
+            <CardRow>
+              <CardLabel>주소</CardLabel>
+              <CardTextRight>서울특별시 용산구</CardTextRight>
+            </CardRow>
+            <CardRow>
+              <CardLabel>일정</CardLabel>
+              <CardTextRight>10:00~12:00, 12:00~18:00</CardTextRight>
+            </CardRow>
+            <CardRow>
+              <CardLabel>대상</CardLabel>
+              <CardTextRight>UXUI 입문에 관심이 있는 비전공자</CardTextRight>
+            </CardRow>
+          </CardTextBox>
+          {/* 하단 버튼 영역 */}
+          <CardButtonContainer>
+            <IconButton type="button" aria-label="지도보기">
+              <img src={GotoMapButtonSvg} alt="지도보기" />
+            </IconButton>
             <ActionButton type="learnMore" onClick={handleLearnMore} />
             <ActionButton
               type="apply"
               text={type === "education" ? "신청하기" : "예약하기"}
               onClick={handleApply}
             />
-          </ButtonGroup>
-        </CardButtonContainer>
-      </CardContainer>
+          </CardButtonContainer>
+        </CardContainer>
+      </CardCenterWrapper>
     </CardOuter>
   );
 };
@@ -139,20 +139,28 @@ const CardOuter = styled.div`
   }
 `;
 
+// 카드 가운데 정렬을 위한 래퍼
+const CardCenterWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`;
+
 // 카드 전체 컨테이너
 const CardContainer = styled.div`
   background: white;
   border-radius: 16px;
   padding: 32px 24px 32px 24px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  max-width: 440px;
-  min-width: 400px;
+  max-width: 420px;
+  min-width: 350px;
   min-height: 560px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   position: relative;
-  gap: 18px;
+  gap: 8px;
 
   @media (max-width: 600px) {
     max-width: 98vw;
@@ -284,7 +292,7 @@ const CardButtonContainer = styled.div`
   width: 100%;
   box-sizing: border-box;
   justify-content: space-between;
-  gap: 0;
+  gap: 5px;
 
   @media (max-width: 600px) {
     position: static;
@@ -296,18 +304,6 @@ const CardButtonContainer = styled.div`
     align-items: center;
     justify-content: space-between;
     gap: 0;
-  }
-`;
-
-// 버튼 그룹 (자세히 보기/신청하기)
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 12px;
-
-  @media (max-width: 600px) {
-    flex: 1;
-    gap: 10px;
-    justify-content: flex-end;
   }
 `;
 
@@ -345,9 +341,9 @@ const StyledActionButton = styled.button<{ $buttonType?: ActionButtonType }>`
   height: 34px;
   min-width: ${({ $buttonType }) =>
     $buttonType === "learnMore"
-      ? "140px"
+      ? "120px"
       : $buttonType === "apply"
-      ? "140px"
+      ? "120px"
       : "90px"};
   cursor: pointer;
   transition: background 0.15s, color 0.15s, transform 0.1s;
