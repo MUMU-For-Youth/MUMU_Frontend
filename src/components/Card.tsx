@@ -12,6 +12,12 @@ import GotoDetailButton from "./Button/GotoDetailButton";
 import GotoApplyButton from "./Button/GotoApplyButton";
 import { ApiEduResponse, ApiSpaceResponse } from "../types/responses";
 
+// 제목이 너무 길면 ...으로 줄여주는 함수 (2줄 기준, 실제 줄바꿈은 CSS로 처리)
+function truncateTitle(title: string, maxLength: number = 40): string {
+  if (title.length <= maxLength) return title;
+  return title.slice(0, maxLength - 1) + "…";
+}
+
 // props 타입 정의 (Discriminated Union)
 interface CardPropsEducation {
   type: "education";
@@ -35,6 +41,12 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
     });
   };
 
+  // 제목 추출 및 줄임표 적용 (길이 제한은 40자로 넉넉히)
+  const title =
+    type === "education"
+      ? truncateTitle(data.eduName)
+      : truncateTitle(data.spaceName);
+
   return (
     <CardOuter>
       <CardCenterWrapper>
@@ -44,8 +56,10 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
           </CardTag>
 
           <CardTitleRow>
-            <CardTitle>
-              {type === "education" ? data.eduName : data.spaceName}
+            <CardTitle
+              title={type === "education" ? data.eduName : data.spaceName}
+            >
+              {title}
             </CardTitle>
             <BookmarkButton
               type="button"
@@ -144,12 +158,20 @@ const CardTitleRow = styled.div`
   align-items: center;
 `;
 
-// 카드 제목
+// 카드 제목 (2줄까지 보이고, 넘치면 ... 처리)
 const CardTitle = styled.h2`
   font-size: 1.35rem;
   margin: 0;
   flex: 1;
   color: #222;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: normal;
+  min-height: calc(1.35rem * 1.2 * 2); /* 2줄 높이 확보 (line-height 1.2) */
 
   @media (max-width: 600px) {
     color: #111;
