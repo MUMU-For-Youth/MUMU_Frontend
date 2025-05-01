@@ -3,36 +3,14 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import GotoMapButtonSvg from "../assets/buttons/GotoMapButton.svg";
-import EducationDummyImage from "../assets/dummyImage/EducationDummyImage.svg";
 import UnBookmarkIcon from "../assets/icons/UnBookmarkIcon.svg";
 import BookmarkIcon from "../assets/icons/BookmarkIcon.svg";
 import CardTag from "./CardTag";
 import EducationTextSection from "./EducationTextSection";
 import { ApiEduResponse, ApiSpaceResponse } from "../types/responses";
 import SpaceTextSection from "./SpaceTextSection";
-
-// ActionButton 타입 정의
-type ActionButtonType = "learnMore" | "apply";
-
-// ActionButton 컴포넌트: 자세히 보기/신청하기 버튼
-interface ActionButtonProps {
-  text?: string;
-  type: ActionButtonType;
-  onClick?: () => void;
-}
-const ActionButton: React.FC<ActionButtonProps> = ({ text, type, onClick }) => {
-  const isLearnMore = type === "learnMore";
-  return (
-    <StyledActionButton
-      type="button"
-      aria-label={isLearnMore ? "자세히 보기" : text}
-      onClick={onClick}
-      $buttonType={type}
-    >
-      {isLearnMore ? "자세히 보기" : text}
-    </StyledActionButton>
-  );
-};
+import GotoDetailButton from "./Button/GotoDetailButton";
+import GotoApplyButton from "./Button/GotoApplyButton";
 
 interface CardProps<T = "space" | "education"> {
   type: T;
@@ -51,20 +29,6 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
       return !prev;
     });
   };
-
-  // 자세히 보기 버튼 클릭 핸들러
-  const handleLearnMore = () => {
-    alert("자세히 보기 클릭!");
-  };
-
-  // 신청하기 버튼 클릭 핸들러
-  const handleApply = () => {
-    alert("신청하기 클릭!");
-  };
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   return (
     <CardOuter>
@@ -118,11 +82,14 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
             <IconButton type="button" aria-label="지도보기">
               <img src={GotoMapButtonSvg} alt="지도보기" />
             </IconButton>
-            <ActionButton type="learnMore" onClick={handleLearnMore} />
-            <ActionButton
-              type="apply"
-              text={type === "education" ? "신청하기" : "예약하기"}
-              onClick={handleApply}
+            <GotoDetailButton />
+            <GotoApplyButton
+              type={type === "education" ? "apply" : "reserve"}
+              url={
+                type === "education"
+                  ? (data as ApiEduResponse).eduUrl
+                  : (data as ApiSpaceResponse).spaceUrl
+              }
             />
           </CardButtonContainer>
         </CardContainer>
@@ -334,39 +301,5 @@ const IconButton = styled.button`
   @media (max-width: 600px) {
     margin-right: 10px;
     flex-shrink: 0;
-  }
-`;
-
-// 자세히 보기/신청하기 버튼
-const StyledActionButton = styled.button<{ $buttonType?: ActionButtonType }>`
-  background: #6287fa;
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  font-size: 1rem;
-  font-weight: 500;
-  height: 34px;
-  min-width: ${({ $buttonType }) =>
-    $buttonType === "learnMore"
-      ? "120px"
-      : $buttonType === "apply"
-      ? "120px"
-      : "90px"};
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s, transform 0.1s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  &:active {
-    transform: scale(0.97);
-  }
-
-  @media (max-width: 600px) {
-    min-width: 0;
-    flex: 1;
-    font-size: 0.98rem;
-    padding: 0 8px;
-    height: 32px;
-    gap: 20px;
   }
 `;

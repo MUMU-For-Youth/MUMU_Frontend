@@ -63,6 +63,34 @@ export const Button = styled.button<{
   }}
 `;
 
+export const BaseButton = styled.button`
+  background: ${colors.primary};
+  color: ${colors.white};
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 500;
+  height: 34px;
+  min-width: 120px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:active {
+    transform: scale(0.97);
+  }
+
+  @media (max-width: 600px) {
+    min-width: 0;
+    flex: 1;
+    font-size: 0.98rem;
+    padding: 0 8px;
+    height: 32px;
+    gap: 20px;
+  }
+`;
+
 export const Card = styled.div`
   background-color: ${colors.white};
   border-radius: 8px;
