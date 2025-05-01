@@ -1,28 +1,33 @@
 // Card 컴포넌트: 교육 카드 UI (북마크, 상세정보, 지도, 신청 등 포함)
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import GotoMapButtonSvg from "../assets/buttons/GotoMapButton.svg";
 import UnBookmarkIcon from "../assets/icons/UnBookmarkIcon.svg";
 import BookmarkIcon from "../assets/icons/BookmarkIcon.svg";
 import CardTag from "./CardTag";
 import EducationTextSection from "./EducationTextSection";
-import { ApiEduResponse, ApiSpaceResponse } from "../types/responses";
 import SpaceTextSection from "./SpaceTextSection";
 import GotoDetailButton from "./Button/GotoDetailButton";
 import GotoApplyButton from "./Button/GotoApplyButton";
+import { ApiEduResponse, ApiSpaceResponse } from "../types/responses";
 
-interface CardProps<T = "space" | "education"> {
-  type: T;
-  data?: T extends "space" ? ApiSpaceResponse : ApiEduResponse;
+// props 타입 정의 (Discriminated Union)
+interface CardPropsEducation {
+  type: "education";
+  data: ApiEduResponse;
 }
 
-// Card 컴포넌트 본문
+interface CardPropsSpace {
+  type: "space";
+  data: ApiSpaceResponse;
+}
+
+type CardProps = CardPropsEducation | CardPropsSpace;
+
 const Card: React.FC<CardProps> = ({ type, data }) => {
-  // 북마크 상태
   const [bookmarked, setBookmarked] = useState(false);
 
-  // 북마크 버튼 클릭 핸들러
   const handleBookmarkClick = () => {
     setBookmarked((prev) => {
       alert(!prev ? "북마크 했습니다" : "북마크를 해제했습니다");
@@ -34,18 +39,13 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
     <CardOuter>
       <CardCenterWrapper>
         <CardContainer>
-          {/* 상단 태그 */}
           <CardTag>
-            {type === "education"
-              ? (data as ApiEduResponse).field
-              : (data as ApiSpaceResponse).spaceType}
+            {type === "education" ? data.field : data.spaceType}
           </CardTag>
-          {/* 제목 + 북마크 */}
+
           <CardTitleRow>
             <CardTitle>
-              {type === "education"
-                ? (data as ApiEduResponse).eduName
-                : (data as ApiSpaceResponse).spaceName}
+              {type === "education" ? data.eduName : data.spaceName}
             </CardTitle>
             <BookmarkButton
               type="button"
@@ -59,25 +59,20 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
               />
             </BookmarkButton>
           </CardTitleRow>
-          {/* 대표 이미지 */}
+
           <ImageWrapper>
             <CardImage
-              src={
-                type === "education"
-                  ? (data as ApiEduResponse).eduImage
-                  : (data as ApiSpaceResponse).spaceImage
-              }
+              src={type === "education" ? data.eduImage : data.spaceImage}
               alt="교육 or 공간 이미지"
             />
           </ImageWrapper>
-          {/* 상세 정보 */}
+
           {type === "education" ? (
-            <EducationTextSection data={data as ApiEduResponse} />
+            <EducationTextSection data={data} />
           ) : (
-            <SpaceTextSection data={data as ApiSpaceResponse} />
+            <SpaceTextSection data={data} />
           )}
 
-          {/* 하단 버튼 영역 */}
           <CardButtonContainer>
             <IconButton type="button" aria-label="지도보기">
               <img src={GotoMapButtonSvg} alt="지도보기" />
@@ -85,11 +80,7 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
             <GotoDetailButton />
             <GotoApplyButton
               type={type === "education" ? "apply" : "reserve"}
-              url={
-                type === "education"
-                  ? (data as ApiEduResponse).eduUrl
-                  : (data as ApiSpaceResponse).spaceUrl
-              }
+              url={type === "education" ? data.eduUrl : data.spaceUrl}
             />
           </CardButtonContainer>
         </CardContainer>

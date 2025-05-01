@@ -1,28 +1,49 @@
 // pages/EducationList.tsx
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import axios from "axios";
 import Card from "../components/Card";
+import { ApiEduResponse } from "../types/responses"; // ApiEduResponse 타입 import
 
 // EducationList 컴포넌트: 무료 교육 목록 페이지를 렌더링합니다.
 const EducationList: React.FC = () => {
-  // 임시 카드 데이터 개수
-  const cardCount = 8;
-  const cards = Array.from({ length: cardCount });
+  const [educationList, setEducationList] = useState<ApiEduResponse[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  // API 데이터 fetch
+  useEffect(() => {
+    const fetchEducationData = async () => {
+      try {
+        const response = await axios.get<ApiEduResponse[]>(
+          "http://43.201.111.31:8080/api/edu"
+        );
+        setEducationList(response.data);
+      } catch (error) {
+        console.error("교육 정보를 불러오는 데 실패했습니다.", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEducationData();
+  }, []);
 
   return (
     <ScrollWrapper>
       <EducationListContainer>
-        {/* 페이지 제목 */}
         <h1>무료 교육 목록</h1>
-        {/* <CardGrid> */}
-        {/* Card 컴포넌트 여러 개 렌더링 (임시 데이터) */}
-        {/* {cards.map((_, idx) => (
-            <GridCardWrapper key={idx}>
-              <Card type="education" />
-            </GridCardWrapper>
-          ))}
-        </CardGrid> */}
+        {loading ? (
+          <p>로딩 중...</p>
+        ) : (
+          <CardGrid>
+            {educationList.map((edu) => (
+              <GridCardWrapper key={edu.eduId}>
+                <Card type="education" data={edu} />
+              </GridCardWrapper>
+            ))}
+          </CardGrid>
+        )}
       </EducationListContainer>
     </ScrollWrapper>
   );
