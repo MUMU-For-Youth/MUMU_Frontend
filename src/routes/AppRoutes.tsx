@@ -6,6 +6,7 @@ import SpaceList from "../pages/SpaceList";
 import SpaceMap from "../pages/SpaceMap";
 import Mypage from "../pages/Mypage";
 import SignUp from "../pages/SignUp";
+import Detail from "../pages/Detail";
 
 const routes = [
   { path: "/", element: <EducationList /> },
@@ -14,6 +15,7 @@ const routes = [
   { path: "/space-map", element: <SpaceMap /> },
   { path: "/mypage", element: <Mypage /> },
   { path: "/signup", element: <SignUp /> },
+  { path: "/detail/:type/:id", element: <Detail /> },
 ];
 
 const AppRoutes: React.FC = () => {
