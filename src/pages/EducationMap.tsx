@@ -2,14 +2,49 @@ import styled from "styled-components";
 import NaverMap from "../components/NaverMap";
 import SlidingPanel from "../components/SlidingPanel";
 import Card from "../components/Card";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { baseURL } from "../api/api";
+import {
+  ApiEduMarkerResponse,
+  ApiEduResponse,
+  EduWithMarker,
+} from "../types/responses";
 
-/**
- * EducationMap 페이지
- * - 좌측에 SlidingPanel(교육 카드 리스트), 우측에 NaverMap(지도) 표시
- * - SlidingPanel은 content prop을 통해 카드 리스트를 전달받음
- * - CardList는 패널 내부에서 최대한 많은 영역을 차지하며 스크롤 가능
- */
 const EducationMap: React.FC = () => {
+  const [eduList, setEduList] = useState<EduWithMarker[]>([]); // 교육 리스트 상태
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const [eduListRes, markerRes] = await Promise.all([
+          axios.get<ApiEduResponse[]>(`${baseURL}/api/edu`),
+          axios.get<ApiEduMarkerResponse[]>(`${baseURL}/api/edu/marker`),
+        ]);
+
+        const merged: EduWithMarker[] = eduListRes.data
+          .map((edu) => {
+            const marker = markerRes.data.find((m) => m.eduId === edu.eduId);
+
+            if (!marker) return null;
+
+            return {
+              ...edu,
+              lat: marker.eduLocationLatitude!,
+              lng: marker.eduLocationLongitude!,
+            };
+          })
+          .filter(Boolean) as EduWithMarker[];
+
+        setEduList(merged);
+      } catch (err) {
+        console.error("교육 API 호출 실패", err);
+      }
+    };
+
+    fetch();
+  }, []);
+
   return (
     <EducationMapContainer>
       <SlidingPanel
@@ -17,18 +52,21 @@ const EducationMap: React.FC = () => {
         content={
           <CardListWrapper>
             <CardList>
-              {/* 교육 카드 예시 (실제 데이터로 대체 가능) */}
-              <Card type="space" />
-              <Card type="space" />
-              <Card type="space" />
-              <Card type="space" />
-              {/* 필요시 더 추가 */}
+              {eduList.map((edu, id) => (
+                <Card key={id} type="education" data={edu} />
+              ))}
             </CardList>
           </CardListWrapper>
         }
       />
       {/* 지도 영역 */}
-      <NaverMap />
+      <NaverMap
+        eduMarkers={eduList.map((m) => ({
+          eduId: m.eduId!,
+          lat: m.lat!,
+          lng: m.lng!,
+        }))}
+      />
     </EducationMapContainer>
   );
 };

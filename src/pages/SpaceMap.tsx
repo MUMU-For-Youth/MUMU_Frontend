@@ -2,6 +2,14 @@ import styled from "styled-components";
 import NaverMap from "../components/NaverMap";
 import SlidingPanel from "../components/SlidingPanel";
 import Card from "../components/Card";
+import { useEffect, useState } from "react";
+import { baseURL } from "../api/api";
+import axios from "axios";
+import {
+  ApiSpaceMarkerResponse,
+  ApiSpaceResponse,
+  SpaceWithMarker,
+} from "@/types/responses";
 
 /**
  * SpaceMap 페이지
@@ -10,6 +18,41 @@ import Card from "../components/Card";
  * - CardList는 패널 내부에서 최대한 많은 영역을 차지하며 스크롤 가능
  */
 const SpaceMap: React.FC = () => {
+  const [spaceList, setSpaceList] = useState<SpaceWithMarker[]>([]); // 교육 리스트 상태
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const [eduListRes, markerRes] = await Promise.all([
+          axios.get<ApiSpaceResponse[]>(`${baseURL}/api/space`),
+          axios.get<ApiSpaceMarkerResponse[]>(`${baseURL}/api/space/marker`),
+        ]);
+
+        const merged: SpaceWithMarker[] = eduListRes.data
+          .map((space) => {
+            const marker = markerRes.data.find(
+              (m) => m.spaceId === space.spaceId
+            );
+
+            if (!marker) return null;
+
+            return {
+              ...space,
+              lat: marker.spaceLocationLatitude!,
+              lng: marker.spaceLocationLongitude!,
+            };
+          })
+          .filter(Boolean) as SpaceWithMarker[];
+
+        setSpaceList(merged);
+      } catch (err) {
+        console.error("공간 API 호출 실패", err);
+      }
+    };
+
+    fetch();
+  }, []);
+
   return (
     <SpaceMapContainer>
       {/* 좌측 패널: 공간 카드 리스트 */}
@@ -17,17 +60,21 @@ const SpaceMap: React.FC = () => {
         content={
           <CardListWrapper>
             <CardList>
-              {/* 공간 카드 예시 (실제 데이터로 대체 가능) */}
-              <Card type="space" />
-              <Card type="space" />
-              <Card type="space" />
-              {/* 필요시 더 추가 */}
+              {spaceList.map((space, id) => (
+                <Card key={id} type="space" data={space} />
+              ))}
             </CardList>
           </CardListWrapper>
         }
       />
       {/* 우측 지도 영역 */}
-      <NaverMap />
+      <NaverMap
+        spaceMarkers={spaceList.map((m) => ({
+          spaceId: m.spaceId!,
+          lat: m.lat!,
+          lng: m.lng!,
+        }))}
+      />
     </SpaceMapContainer>
   );
 };

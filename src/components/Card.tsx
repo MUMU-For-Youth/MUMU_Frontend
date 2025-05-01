@@ -1,12 +1,15 @@
 // Card 컴포넌트: 교육 카드 UI (북마크, 상세정보, 지도, 신청 등 포함)
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import GotoMapButtonSvg from "../assets/buttons/GotoMapButton.svg";
 import EducationDummyImage from "../assets/dummyImage/EducationDummyImage.svg";
 import UnBookmarkIcon from "../assets/icons/UnBookmarkIcon.svg";
 import BookmarkIcon from "../assets/icons/BookmarkIcon.svg";
 import CardTag from "./CardTag";
+import EducationTextSection from "./EducationTextSection";
+import { ApiEduResponse, ApiSpaceResponse } from "../types/responses";
+import SpaceTextSection from "./SpaceTextSection";
 
 // ActionButton 타입 정의
 type ActionButtonType = "learnMore" | "apply";
@@ -31,12 +34,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({ text, type, onClick }) => {
   );
 };
 
-interface CardProps {
-  type: string;
+interface CardProps<T = "space" | "education"> {
+  type: T;
+  data?: T extends "space" ? ApiSpaceResponse : ApiEduResponse;
 }
 
 // Card 컴포넌트 본문
-const Card: React.FC<CardProps> = ({ type }) => {
+const Card: React.FC<CardProps> = ({ type, data }) => {
   // 북마크 상태
   const [bookmarked, setBookmarked] = useState(false);
 
@@ -63,10 +67,18 @@ const Card: React.FC<CardProps> = ({ type }) => {
       <CardCenterWrapper>
         <CardContainer>
           {/* 상단 태그 */}
-          <CardTag>취업</CardTag>
+          <CardTag>
+            {type === "education"
+              ? (data as ApiEduResponse).field
+              : (data as ApiSpaceResponse).spaceType}
+          </CardTag>
           {/* 제목 + 북마크 */}
           <CardTitleRow>
-            <CardTitle>감각적인 UIUX 디자인 워크숍</CardTitle>
+            <CardTitle>
+              {type === "education"
+                ? (data as ApiEduResponse).eduName
+                : (data as ApiSpaceResponse).spaceName}
+            </CardTitle>
             <BookmarkButton
               type="button"
               aria-label={bookmarked ? "북마크 해제" : "북마크"}
@@ -84,28 +96,12 @@ const Card: React.FC<CardProps> = ({ type }) => {
             <CardImage src={EducationDummyImage} alt="워크숍 이미지" />
           </ImageWrapper>
           {/* 상세 정보 */}
-          <CardTextBox>
-            <CardRow>
-              <CardLabel>일시</CardLabel>
-              <CardTextRight>2025.04.22(화)</CardTextRight>
-            </CardRow>
-            <CardRow>
-              <CardLabel>방식</CardLabel>
-              <CardTextRight>오프라인</CardTextRight>
-            </CardRow>
-            <CardRow>
-              <CardLabel>주소</CardLabel>
-              <CardTextRight>서울특별시 용산구</CardTextRight>
-            </CardRow>
-            <CardRow>
-              <CardLabel>일정</CardLabel>
-              <CardTextRight>10:00~12:00, 12:00~18:00</CardTextRight>
-            </CardRow>
-            <CardRow>
-              <CardLabel>대상</CardLabel>
-              <CardTextRight>UXUI 입문에 관심이 있는 비전공자</CardTextRight>
-            </CardRow>
-          </CardTextBox>
+          {type === "education" ? (
+            <EducationTextSection data={data as ApiEduResponse} />
+          ) : (
+            <SpaceTextSection data={data as ApiSpaceResponse} />
+          )}
+
           {/* 하단 버튼 영역 */}
           <CardButtonContainer>
             <IconButton type="button" aria-label="지도보기">

@@ -15,7 +15,7 @@ const TOGGLE_WIDTH = 35;
 const DesktopSlidingPanel: React.FC<DesktopSlidingPanelProps> = ({
   content,
 }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Wrapper isOpen={isOpen}>
