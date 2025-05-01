@@ -15,14 +15,14 @@ const EducationList: React.FC = () => {
       <EducationListContainer>
         {/* 페이지 제목 */}
         <h1>무료 교육 목록</h1>
-        <CardGrid>
-          {/* Card 컴포넌트 여러 개 렌더링 (임시 데이터) */}
-          {cards.map((_, idx) => (
+        {/* <CardGrid> */}
+        {/* Card 컴포넌트 여러 개 렌더링 (임시 데이터) */}
+        {/* {cards.map((_, idx) => (
             <GridCardWrapper key={idx}>
               <Card type="education" />
             </GridCardWrapper>
           ))}
-        </CardGrid>
+        </CardGrid> */}
       </EducationListContainer>
     </ScrollWrapper>
   );
