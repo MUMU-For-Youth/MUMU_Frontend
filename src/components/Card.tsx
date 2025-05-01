@@ -62,6 +62,10 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
     alert("신청하기 클릭!");
   };
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   return (
     <CardOuter>
       <CardCenterWrapper>
@@ -93,7 +97,14 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
           </CardTitleRow>
           {/* 대표 이미지 */}
           <ImageWrapper>
-            <CardImage src={EducationDummyImage} alt="워크숍 이미지" />
+            <CardImage
+              src={
+                type === "education"
+                  ? (data as ApiEduResponse).eduImage
+                  : (data as ApiSpaceResponse).spaceImage
+              }
+              alt="교육 or 공간 이미지"
+            />
           </ImageWrapper>
           {/* 상세 정보 */}
           {type === "education" ? (

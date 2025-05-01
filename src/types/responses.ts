@@ -8,6 +8,7 @@ export interface ApiSpaceResponse {
   contactNumber: string;
   spaceUrl: string;
   bookmarked: boolean;
+  spaceImage: string;
 }
 
 export interface ApiEduResponse {
@@ -21,6 +22,7 @@ export interface ApiEduResponse {
   eduTarget: string;
   eduUrl: string;
   bookmarked: boolean;
+  eduImage: string;
 }
 
 export interface ApiSpaceMarkerResponse {
