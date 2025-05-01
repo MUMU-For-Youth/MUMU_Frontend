@@ -1,15 +1,12 @@
-// Card 컴포넌트: 교육 카드 UI (북마크, 상세정보, 지도, 신청 등 포함)
-
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import GotoMapButtonSvg from "../assets/buttons/GotoMapButton.svg";
-import UnBookmarkIcon from "../assets/icons/UnBookmarkIcon.svg";
-import BookmarkIcon from "../assets/icons/BookmarkIcon.svg";
 import CardTag from "./CardTag";
 import EducationTextSection from "./EducationTextSection";
 import SpaceTextSection from "./SpaceTextSection";
 import GotoDetailButton from "./Button/GotoDetailButton";
 import GotoApplyButton from "./Button/GotoApplyButton";
+import BookMarkIconButton from "./Button/BookMarkIconButton";
 import { ApiEduResponse, ApiSpaceResponse } from "../types/responses";
 
 // 제목이 너무 길면 ...으로 줄여주는 함수 (2줄 기준, 실제 줄바꿈은 CSS로 처리)
@@ -32,16 +29,6 @@ interface CardPropsSpace {
 type CardProps = CardPropsEducation | CardPropsSpace;
 
 const Card: React.FC<CardProps> = ({ type, data }) => {
-  const [bookmarked, setBookmarked] = useState(false);
-
-  const handleBookmarkClick = () => {
-    setBookmarked((prev) => {
-      alert(!prev ? "북마크 했습니다" : "북마크를 해제했습니다");
-      return !prev;
-    });
-  };
-
-  // 제목 추출 및 줄임표 적용 (길이 제한은 40자로 넉넉히)
   const title =
     type === "education"
       ? truncateTitle(data.eduName)
@@ -61,17 +48,7 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
             >
               {title}
             </CardTitle>
-            <BookmarkButton
-              type="button"
-              aria-label={bookmarked ? "북마크 해제" : "북마크"}
-              onClick={handleBookmarkClick}
-            >
-              <img
-                src={bookmarked ? BookmarkIcon : UnBookmarkIcon}
-                alt={bookmarked ? "북마크됨" : "북마크"}
-                style={{ width: 28, height: 28 }}
-              />
-            </BookmarkButton>
+            <BookMarkIconButton />
           </CardTitleRow>
 
           <ImageWrapper>
@@ -107,7 +84,6 @@ export default Card;
 
 // ================== styled-components ==================
 
-// 카드 바깥쪽 패딩을 담당하는 래퍼
 const CardOuter = styled.div`
   padding: 18px 10px 18px 10px;
   background: transparent;
@@ -118,7 +94,6 @@ const CardOuter = styled.div`
   }
 `;
 
-// 카드 가운데 정렬을 위한 래퍼
 const CardCenterWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -126,7 +101,6 @@ const CardCenterWrapper = styled.div`
   width: 100%;
 `;
 
-// 카드 전체 컨테이너
 const CardContainer = styled.div`
   background: white;
   border-radius: 16px;
@@ -145,20 +119,18 @@ const CardContainer = styled.div`
     max-width: 98vw;
     min-width: 0;
     width: 100%;
-    padding: 28px 18px 28px 18px; /* 모바일에서 카드 내부 패딩을 더 크게 */
+    padding: 28px 18px 28px 18px;
     gap: 16px;
     border-radius: 18px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
 `;
 
-// 제목 + 북마크 버튼 행
 const CardTitleRow = styled.div`
   display: flex;
   align-items: center;
 `;
 
-// 카드 제목 (2줄까지 보이고, 넘치면 ... 처리)
 const CardTitle = styled.h2`
   font-size: 1.35rem;
   margin: 0;
@@ -171,25 +143,13 @@ const CardTitle = styled.h2`
   text-overflow: ellipsis;
   word-break: break-all;
   white-space: normal;
-  min-height: calc(1.35rem * 1.2 * 2); /* 2줄 높이 확보 (line-height 1.2) */
+  min-height: calc(1.35rem * 1.2 * 2);
 
   @media (max-width: 600px) {
     color: #111;
   }
 `;
 
-// 북마크 버튼
-const BookmarkButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0 0 0 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  height: 32px;
-`;
-
-// 대표 이미지 래퍼
 const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
@@ -204,7 +164,6 @@ const ImageWrapper = styled.div`
   }
 `;
 
-// 대표 이미지
 const CardImage = styled.img`
   width: 100%;
   height: 100%;
@@ -214,63 +173,6 @@ const CardImage = styled.img`
   display: block;
 `;
 
-// 상세 정보 영역
-const CardTextBox = styled.div`
-  font-size: 1.05rem;
-  line-height: 1.5;
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-
-  @media (max-width: 600px) {
-    padding: 2px;
-  }
-`;
-
-// 상세 정보 한 줄
-const CardRow = styled.div`
-  display: flex;
-  align-items: start;
-  margin-bottom: 6px;
-
-  @media (max-width: 600px) {
-    margin-bottom: 4px;
-  }
-`;
-
-// 상세 정보 라벨
-const CardLabel = styled.div`
-  font-weight: bold;
-  min-width: 56px;
-  color: #b0b0b0;
-  font-size: 1.02rem;
-  margin-right: 12px;
-
-  @media (max-width: 600px) {
-    min-width: 48px;
-    font-size: 0.98rem;
-    margin-right: 8px;
-  }
-`;
-
-// 상세 정보 텍스트
-const CardText = styled.div`
-  color: #222;
-  font-size: 1.02rem;
-  flex: 1;
-
-  @media (max-width: 600px) {
-    font-size: 0.98rem;
-  }
-`;
-
-// 오른쪽 정렬 텍스트
-const CardTextRight = styled(CardText)`
-  text-align: right;
-`;
-
-// 하단 버튼 영역
 const CardButtonContainer = styled.div`
   display: flex;
   align-items: center;
@@ -294,7 +196,6 @@ const CardButtonContainer = styled.div`
   }
 `;
 
-// 하단 아이콘 버튼 (지도)
 const IconButton = styled.button`
   background: none;
   border: none;
