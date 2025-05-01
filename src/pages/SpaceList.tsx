@@ -10,13 +10,13 @@ const SpaceList: React.FC = () => {
     <SpaceListScrollWrapper>
       <SpaceListContainer>
         <h1>무료공간</h1>
-        <CardGrid>
-          {cards.map((_, idx) => (
+        {/* <CardGrid> */}
+        {/* {cards.map((_, idx) => (
             <GridCardWrapper key={idx}>
               <Card type="space" />
             </GridCardWrapper>
           ))}
-        </CardGrid>
+        </CardGrid> */}
       </SpaceListContainer>
     </SpaceListScrollWrapper>
   );
