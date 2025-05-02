@@ -9,7 +9,7 @@ import GotoApplyButton from "./Button/GotoApplyButton";
 import BookMarkIconButton from "./Button/BookMarkIconButton";
 import { ApiEduResponse, ApiSpaceResponse } from "../types/responses";
 
-// 제목이 너무 길면 ...으로 줄여주는 함수 (2줄 기준, 실제 줄바꿈은 CSS로 처리)
+// 제목이 너무 길면 …으로 줄여주는 함수 (2줄 기준)
 function truncateTitle(title: string, maxLength: number = 40): string {
   if (title.length <= maxLength) return title;
   return title.slice(0, maxLength - 1) + "…";
@@ -48,20 +48,27 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
             >
               {title}
             </CardTitle>
+            {/* bookmarked 상태 전달 */}
             <BookMarkIconButton />
           </CardTitleRow>
 
           <ImageWrapper>
             <CardImage
-              src={type === "education" ? data.eduImage : data.spaceImage}
+              src={
+                type === "education"
+                  ? // eduImage 필드가 없다면 placeholder로 대체
+                    (data as ApiEduResponse).eduImage ?? ""
+                  : (data as ApiSpaceResponse).spaceImage ?? ""
+              }
               alt="교육 or 공간 이미지"
             />
           </ImageWrapper>
 
+          {/* 화면에 따라 적절한 정보 섹션 렌더링 */}
           {type === "education" ? (
-            <EducationTextSection data={data} />
+            <EducationTextSection data={data as ApiEduResponse} />
           ) : (
-            <SpaceTextSection data={data} />
+            <SpaceTextSection data={data as ApiSpaceResponse} />
           )}
 
           <CardButtonContainer>
@@ -71,7 +78,11 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
             <GotoDetailButton />
             <GotoApplyButton
               type={type === "education" ? "apply" : "reserve"}
-              url={type === "education" ? data.eduUrl : data.spaceUrl}
+              url={
+                type === "education"
+                  ? (data as ApiEduResponse).eduUrl
+                  : (data as ApiSpaceResponse).spaceUrl
+              }
             />
           </CardButtonContainer>
         </CardContainer>
@@ -85,11 +96,11 @@ export default Card;
 // ================== styled-components ==================
 
 const CardOuter = styled.div`
-  padding: 18px 10px 18px 10px;
+  padding: 18px 10px;
   background: transparent;
 
   @media (max-width: 600px) {
-    padding: 20px 12px 28px 12px;
+    padding: 20px 12px 28px;
     border-radius: 18px;
   }
 `;
@@ -104,7 +115,7 @@ const CardCenterWrapper = styled.div`
 const CardContainer = styled.div`
   background: white;
   border-radius: 16px;
-  padding: 32px 24px 32px 24px;
+  padding: 32px 24px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   max-width: 420px;
   min-width: 350px;
@@ -118,8 +129,7 @@ const CardContainer = styled.div`
   @media (max-width: 600px) {
     max-width: 98vw;
     min-width: 0;
-    width: 100%;
-    padding: 28px 18px 28px 18px;
+    padding: 28px 18px;
     gap: 16px;
     border-radius: 18px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -184,14 +194,7 @@ const CardButtonContainer = styled.div`
   gap: 5px;
 
   @media (max-width: 600px) {
-    position: static;
-    padding: 16px 0 0 0;
-    background: transparent;
-    border-radius: 0;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+    padding: 16px 0 0;
     gap: 10px;
   }
 `;
@@ -205,8 +208,6 @@ const IconButton = styled.button`
   align-items: center;
   justify-content: center;
   height: 38px;
-  min-width: 0;
-  box-sizing: border-box;
   transition: transform 0.1s ease-in-out;
   &:active {
     transform: scale(0.95);
@@ -214,6 +215,5 @@ const IconButton = styled.button`
 
   @media (max-width: 600px) {
     margin-right: 10px;
-    flex-shrink: 0;
   }
 `;

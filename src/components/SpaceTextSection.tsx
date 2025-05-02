@@ -6,7 +6,7 @@ function SpaceTextSection({ data }: { data: ApiSpaceResponse }) {
     <CardTextBox>
       <CardRow>
         <CardLabel>이용시간</CardLabel>
-        <CardTextRight>{data.spaceTarget}</CardTextRight>
+        <CardTextRight>{data.spaceTime}</CardTextRight>
       </CardRow>
       <CardRow>
         <CardLabel>대상자</CardLabel>
