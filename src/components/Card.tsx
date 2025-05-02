@@ -82,7 +82,11 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
             <IconButton type="button" aria-label="지도보기">
               <img src={GotoMapButtonSvg} alt="지도보기" />
             </IconButton>
-            <GotoDetailButton />
+            <GotoDetailButton
+              type={type}
+              spaceId={(data as ApiSpaceResponse).spaceId}
+              eduId={(data as ApiEduResponse).eduId}
+            />
             <GotoApplyButton
               type={type === "education" ? "apply" : "reserve"}
               url={

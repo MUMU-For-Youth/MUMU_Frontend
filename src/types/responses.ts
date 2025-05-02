@@ -53,3 +53,34 @@ export interface SpaceWithMarker extends ApiSpaceResponse {
   lat: number;
   lng: number;
 }
+
+export interface ApiEduDetailResponse {
+  eduId: number;
+  eduName: string;
+  eduImage: string;
+  eduDate: string;
+  field: string;
+  eduMethod: string;
+  eduSchedule: string;
+  eduTarget: string;
+  eduLocationName: string;
+  max_capacity: string;
+  eduTeacher: string;
+  eduUrl: string;
+  bookmarked: boolean;
+}
+
+export interface ApiSpaceDetailResponse {
+  spaceId: string;
+  spaceName: string;
+  spaceImage: string;
+  spaceTime: string;
+  spaceTarget: string;
+  spaceLocation: string;
+  contactNumber: string;
+  spaceContent: string;
+  serviceSchedule: string;
+  reservationSchedule: string;
+  spaceUrl: string;
+  bookmarked: boolean;
+}
