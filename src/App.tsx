@@ -18,7 +18,7 @@ const GlobalStyle = createGlobalStyle`
   }
     
   html, body {
-    overflow: hidden;   /* 최악의 경우 body에도 */
+    //overflow: hidden;   /* 최악의 경우 body에도 */
   }
 
   body {
