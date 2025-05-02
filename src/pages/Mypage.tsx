@@ -27,11 +27,11 @@ const Mypage: React.FC = () => {
       <StyledTopBarWrapper>
         <SlidingTopBar />
       </StyledTopBarWrapper>
-      <CardsGrid>
+      {/* <CardsGrid>
         <Card type="space" />
         <Card type="space" />
         <Card type="space" />
-      </CardsGrid>
+      </CardsGrid> */}
     </MypageContainer>
   );
 };

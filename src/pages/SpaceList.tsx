@@ -1,38 +1,60 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import axios from "axios";
 import Card from "../components/Card";
+import { ApiSpaceResponse } from "../types/responses";
 
 const SpaceList: React.FC = () => {
-  // 카드 9장 배열 생성 (실제 데이터가 있다면 map으로 대체)
-  const cards = Array.from({ length: 9 });
+  const [spaces, setSpaces] = useState<ApiSpaceResponse[]>([]);
+  const [token, setToken] = useState<string | null>(null); // 실제 토큰 로직과 연동
+
+  useEffect(() => {
+    const fetchSpaces = async () => {
+      try {
+        const response = await axios.get<ApiSpaceResponse[]>(
+          "http://43.201.111.31:8080/api/space",
+          {
+            headers: {
+              Authorization: token ? `Bearer ${token}` : "null",
+            },
+          }
+        );
+        setSpaces(response.data);
+      } catch (error) {
+        console.error("공간 데이터를 불러오지 못했습니다:", error);
+      }
+    };
+
+    fetchSpaces();
+  }, [token]);
 
   return (
     <SpaceListScrollWrapper>
       <SpaceListContainer>
         <h1>무료공간</h1>
-        {/* <CardGrid> */}
-        {/* {cards.map((_, idx) => (
-            <GridCardWrapper key={idx}>
-              <Card type="space" />
+        <CardGrid>
+          {spaces.map((space) => (
+            <GridCardWrapper key={space.spaceId}>
+              <Card type="space" data={space} />
             </GridCardWrapper>
           ))}
-        </CardGrid> */}
+        </CardGrid>
       </SpaceListContainer>
     </SpaceListScrollWrapper>
   );
 };
+
+export default SpaceList;
 
 const SpaceListScrollWrapper = styled.div`
   width: 100vw;
   height: 100vh;
   overflow-y: auto;
   box-sizing: border-box;
-
-  /* 스크롤바 숨기기 (크로스 브라우징) */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
   }
 `;
 
@@ -72,5 +94,3 @@ const GridCardWrapper = styled.div`
     min-width: 0;
   }
 `;
-
-export default SpaceList;
