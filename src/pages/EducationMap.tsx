@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import NaverMap from "../components/NaverMap";
 import SlidingPanel from "../components/SlidingPanel";
+import DropdownContainer from "../components/Dropdown/DropdownContainer";
 import Card from "../components/Card";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -10,24 +11,31 @@ import {
   ApiEduResponse,
   EduWithMarker,
 } from "../types/responses";
+import { useEduFilterStore } from "../store/useEduFilterStore";
 
 const EducationMap: React.FC = () => {
   const [eduList, setEduList] = useState<EduWithMarker[]>([]); // 교육 리스트 상태
+  const { district, category, status } = useEduFilterStore();
 
   useEffect(() => {
     const fetch = async () => {
       try {
+        const params = new URLSearchParams();
+        if (district.length > 0) params.append("region", district.join(","));
+        if (category.length > 0) params.append("field", category.join(","));
+        if (status.length > 0) params.append("status", status.join(","));
+
         const [eduListRes, markerRes] = await Promise.all([
-          axios.get<ApiEduResponse[]>(`${baseURL}/api/edu`),
+          axios.get<ApiEduResponse[]>(
+            `${baseURL}/api/edu?${params.toString()}`
+          ),
           axios.get<ApiEduMarkerResponse[]>(`${baseURL}/api/edu/marker`),
         ]);
 
         const merged: EduWithMarker[] = eduListRes.data
           .map((edu) => {
             const marker = markerRes.data.find((m) => m.eduId === edu.eduId);
-
             if (!marker) return null;
-
             return {
               ...edu,
               lat: marker.eduLocationLatitude!,
@@ -43,10 +51,13 @@ const EducationMap: React.FC = () => {
     };
 
     fetch();
-  }, []);
+  }, [district, category, status]);
 
   return (
     <EducationMapContainer>
+      <SlidingPanel />
+      {/* <Dropdown /> */}
+      <DropdownContainer type="education" />
       <SlidingPanel
         // CardListWrapper로 감싸서 패널 내부에서 CardList가 100% 영역을 차지하도록 함
         content={

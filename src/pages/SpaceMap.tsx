@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import NaverMap from "../components/NaverMap";
 import SlidingPanel from "../components/SlidingPanel";
+import DropdownContainer from "../components/Dropdown/DropdownContainer";
 import Card from "../components/Card";
 import { useEffect, useState } from "react";
 import { baseURL } from "../api/api";
@@ -10,6 +11,7 @@ import {
   ApiSpaceResponse,
   SpaceWithMarker,
 } from "@/types/responses";
+import { useSpaceFilterStore } from "../store/useSpaceFilterStore";
 
 /**
  * SpaceMap 페이지
@@ -19,21 +21,29 @@ import {
  */
 const SpaceMap: React.FC = () => {
   const [spaceList, setSpaceList] = useState<SpaceWithMarker[]>([]); // 교육 리스트 상태
+  const { district, target, facility } = useSpaceFilterStore();
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const [eduListRes, markerRes] = await Promise.all([
-          axios.get<ApiSpaceResponse[]>(`${baseURL}/api/space`),
+        const params = new URLSearchParams();
+        if (district.length > 0) params.append("region", district.join(","));
+        if (target.length > 0) params.append("target", target.join(","));
+        if (facility.length > 0) params.append("type", facility.join(","));
+
+        console.log("요청" + `${baseURL}/api/space?${params.toString()}`);
+        const [spaceListRes, markerRes] = await Promise.all([
+          axios.get<ApiSpaceResponse[]>(
+            `${baseURL}/api/space?${params.toString()}`
+          ),
           axios.get<ApiSpaceMarkerResponse[]>(`${baseURL}/api/space/marker`),
         ]);
 
-        const merged: SpaceWithMarker[] = eduListRes.data
+        const merged: SpaceWithMarker[] = spaceListRes.data
           .map((space) => {
             const marker = markerRes.data.find(
               (m) => m.spaceId === space.spaceId
             );
-
             if (!marker) return null;
 
             return {
@@ -51,10 +61,12 @@ const SpaceMap: React.FC = () => {
     };
 
     fetch();
-  }, []);
+  }, [district, target, facility]);
 
   return (
     <SpaceMapContainer>
+      <SlidingPanel />
+      <DropdownContainer type="space" />
       {/* 좌측 패널: 공간 카드 리스트 */}
       <SlidingPanel
         content={
