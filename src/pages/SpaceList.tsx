@@ -3,16 +3,17 @@ import styled from "styled-components";
 import axios from "axios";
 import Card from "../components/Card";
 import { ApiSpaceResponse } from "../types/responses";
+import { baseURL } from "../api/api";
 
 const SpaceList: React.FC = () => {
   const [spaces, setSpaces] = useState<ApiSpaceResponse[]>([]);
-  const [token, setToken] = useState<string | null>(null); // 실제 토큰 로직과 연동
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSpaces = async () => {
       try {
         const response = await axios.get<ApiSpaceResponse[]>(
-          "http://43.201.111.31:8080/api/space",
+          `${baseURL}/api/space`,
           {
             headers: {
               Authorization: token ? `Bearer ${token}` : "null",

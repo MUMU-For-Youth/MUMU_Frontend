@@ -3,6 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import Card from "../components/Card";
 import { ApiEduResponse } from "../types/responses";
+import { baseURL } from "../api/api";
 
 const EducationList: React.FC = () => {
   const [educationList, setEducationList] = useState<ApiEduResponse[]>([]);
@@ -12,7 +13,7 @@ const EducationList: React.FC = () => {
     const fetchEducationData = async () => {
       try {
         const response = await axios.get<ApiEduResponse[]>(
-          "http://43.201.111.31:8080/api/edu"
+          `${baseURL}/api/edu`
         );
         setEducationList(response.data);
       } catch (error) {
