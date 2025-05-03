@@ -5,6 +5,7 @@ import { useScreenStore } from "../store/useScreenStore";
 import KakaoLoginButton from "../assets/buttons/KakaoLoginButton.svg";
 import GoogleLoginButton from "../assets/buttons/GoogleLoginButton.svg";
 import { breakpoints, colors } from "../styles/theme";
+import LogoWithText from "../assets/logo/LogoWithText.svg";
 
 const SignUpContainer = styled.div<{ $isMobile: boolean }>`
   width: 100%;
@@ -66,13 +67,12 @@ const SignUp: React.FC = () => {
         style={{
           width: 180,
           height: 200,
-          border: "1px solid gray",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        무무로고
+        <img src={LogoWithText} style={{ width: "300px" }} />
       </div>
       <ButtonContainer>
         <LoginButton>
