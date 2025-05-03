@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.js": "/MUMU_Frontend/static/js/main.f1b68d80.js",
+    "main.js": "/MUMU_Frontend/static/js/main.46ea93eb.js",
     "static/media/KakaoLoginButton.svg": "/MUMU_Frontend/static/media/KakaoLoginButton.476d7456d17d818b8ea6d8f744a31a7b.svg",
     "static/media/GoogleLoginButton.svg": "/MUMU_Frontend/static/media/GoogleLoginButton.54ca5382f5763baeed4e907e1799b538.svg",
     "static/media/SpaceListIcon.svg": "/MUMU_Frontend/static/media/SpaceListIcon.908f9b2c635f37eff7217ae18c17dcf6.svg",
@@ -20,9 +20,9 @@
     "static/media/ArrowRight.svg": "/MUMU_Frontend/static/media/ArrowRight.027fdf77feaa490a45e3735c968c58c5.svg",
     "static/media/CloseArrowIcon.svg": "/MUMU_Frontend/static/media/CloseArrowIcon.d430b2ea68c2010b353a895bccab291c.svg",
     "static/media/OpenArrowIcon.svg": "/MUMU_Frontend/static/media/OpenArrowIcon.c8ddca2afa9d6c22cc83ff2b6ce28d3b.svg",
-    "main.f1b68d80.js.map": "/MUMU_Frontend/static/js/main.f1b68d80.js.map"
+    "main.46ea93eb.js.map": "/MUMU_Frontend/static/js/main.46ea93eb.js.map"
   },
   "entrypoints": [
-    "static/js/main.f1b68d80.js"
+    "static/js/main.46ea93eb.js"
   ]
 }
