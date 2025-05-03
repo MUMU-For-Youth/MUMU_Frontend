@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { MapContainer } from "../styles/common";
 
 interface NaverMapProps {
@@ -13,26 +13,31 @@ interface NaverMapProps {
     lat: number;
     lng: number;
   }[];
+  onEduMarkerClick?: (eduId: number) => void;
+  onSpaceMarkerClick?: (spaceId: string) => void;
 }
 
 const NaverMap: React.FC<NaverMapProps> = ({
   center = { lat: 37.5665, lng: 126.978 }, // 기본 서울
   eduMarkers = [],
   spaceMarkers = [],
+  onEduMarkerClick,
+  onSpaceMarkerClick,
 }) => {
-  const clickMarker = (dataPos: any) => {
-    console.log(dataPos);
-  };
+  const mapRef = useRef<naver.maps.Map | null>(null);
+  const markersRef = useRef<naver.maps.Marker[]>([]);
 
   useEffect(() => {
     const mapElement = document.getElementById("map");
-    if (!mapElement) return;
+    if (!mapElement || mapRef.current) return;
 
     const map = new window.naver.maps.Map("map", {
       center: new window.naver.maps.LatLng(center.lat, center.lng),
       zoom: 13,
       minZoom: 11,
     });
+
+    mapRef.current = map;
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -43,29 +48,43 @@ const NaverMap: React.FC<NaverMapProps> = ({
         map.setCenter(userLoc);
       });
     }
+  }, []); // 빈 배열 → 최초 1회만 실행
 
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    // 이전 마커 제거
+    markersRef.current.forEach((marker) => marker.setMap(null));
+    markersRef.current = [];
+
+    // 교육 마커
     eduMarkers.forEach((markerData) => {
       const marker = new window.naver.maps.Marker({
         position: new window.naver.maps.LatLng(markerData.lat, markerData.lng),
-        map,
+        map: mapRef.current!,
       });
 
       window.naver.maps.Event.addListener(marker, "click", () =>
-        clickMarker(markerData)
+        onEduMarkerClick?.(markerData.eduId)
       );
+
+      markersRef.current.push(marker);
     });
 
+    // 공간 마커
     spaceMarkers.forEach((markerData) => {
       const marker = new window.naver.maps.Marker({
         position: new window.naver.maps.LatLng(markerData.lat, markerData.lng),
-        map,
+        map: mapRef.current!,
       });
 
       window.naver.maps.Event.addListener(marker, "click", () =>
-        clickMarker(markerData)
+        onSpaceMarkerClick?.(markerData.spaceId)
       );
+
+      markersRef.current.push(marker);
     });
-  }, [center, eduMarkers, spaceMarkers]);
+  }, [eduMarkers, spaceMarkers, onEduMarkerClick]);
 
   return <MapContainer id="map" />;
 };

@@ -3,14 +3,14 @@ import NaverMap from "../components/NaverMap";
 import SlidingPanel from "../components/SlidingPanel";
 import DropdownContainer from "../components/Dropdown/DropdownContainer";
 import Card from "../components/Card";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { baseURL } from "../api/api";
 import axios from "axios";
 import {
   ApiSpaceMarkerResponse,
   ApiSpaceResponse,
   SpaceWithMarker,
-} from "@/types/responses";
+} from "../types/responses";
 import { useSpaceFilterStore } from "../store/useSpaceFilterStore";
 
 /**
@@ -22,6 +22,8 @@ import { useSpaceFilterStore } from "../store/useSpaceFilterStore";
 const SpaceMap: React.FC = () => {
   const [spaceList, setSpaceList] = useState<SpaceWithMarker[]>([]); // 교육 리스트 상태
   const { district, target, facility } = useSpaceFilterStore();
+  const [selectedSpaceId, setSelectedSpaceId] = useState<string | null>(null);
+  const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   useEffect(() => {
     const fetch = async () => {
@@ -31,7 +33,6 @@ const SpaceMap: React.FC = () => {
         if (target.length > 0) params.append("target", target.join(","));
         if (facility.length > 0) params.append("type", facility.join(","));
 
-        console.log("요청" + `${baseURL}/api/space?${params.toString()}`);
         const [spaceListRes, markerRes] = await Promise.all([
           axios.get<ApiSpaceResponse[]>(
             `${baseURL}/api/space?${params.toString()}`
@@ -63,17 +64,32 @@ const SpaceMap: React.FC = () => {
     fetch();
   }, [district, target, facility]);
 
+  useEffect(() => {
+    if (selectedSpaceId && cardRefs.current[selectedSpaceId]) {
+      cardRefs.current[selectedSpaceId]?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [selectedSpaceId]);
+
   return (
     <SpaceMapContainer>
-      <SlidingPanel />
       <DropdownContainer type="space" />
       {/* 좌측 패널: 공간 카드 리스트 */}
       <SlidingPanel
         content={
           <CardListWrapper>
             <CardList>
-              {spaceList.map((space, id) => (
-                <Card key={id} type="space" data={space} />
+              {spaceList.map((space) => (
+                <div
+                  key={space.spaceId}
+                  ref={(el) => {
+                    cardRefs.current[space.spaceId] = el;
+                  }}
+                >
+                  <Card type="space" data={space} />
+                </div>
               ))}
             </CardList>
           </CardListWrapper>
@@ -86,6 +102,7 @@ const SpaceMap: React.FC = () => {
           lat: m.lat!,
           lng: m.lng!,
         }))}
+        onSpaceMarkerClick={(spaceId) => setSelectedSpaceId(spaceId)}
       />
     </SpaceMapContainer>
   );
