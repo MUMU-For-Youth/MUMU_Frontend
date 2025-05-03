@@ -27,10 +27,11 @@ const SpaceMap: React.FC = () => {
     const fetch = async () => {
       try {
         const params = new URLSearchParams();
-        if (district) params.append("region", district);
-        if (target) params.append("target", target);
-        if (facility) params.append("type", facility); // 백엔드에서 받는 key에 맞춰서 "type"으로 예시
+        if (district.length > 0) params.append("region", district.join(","));
+        if (target.length > 0) params.append("target", target.join(","));
+        if (facility.length > 0) params.append("type", facility.join(","));
 
+        console.log("요청" + `${baseURL}/api/space?${params.toString()}`);
         const [spaceListRes, markerRes] = await Promise.all([
           axios.get<ApiSpaceResponse[]>(
             `${baseURL}/api/space?${params.toString()}`

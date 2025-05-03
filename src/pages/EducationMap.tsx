@@ -21,9 +21,9 @@ const EducationMap: React.FC = () => {
     const fetch = async () => {
       try {
         const params = new URLSearchParams();
-        if (district) params.append("region", district);
-        if (category) params.append("field", category);
-        if (status) params.append("status", status);
+        if (district.length > 0) params.append("region", district.join(","));
+        if (category.length > 0) params.append("field", category.join(","));
+        if (status.length > 0) params.append("status", status.join(","));
 
         const [eduListRes, markerRes] = await Promise.all([
           axios.get<ApiEduResponse[]>(

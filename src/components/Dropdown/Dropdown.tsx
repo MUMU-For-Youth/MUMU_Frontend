@@ -7,10 +7,10 @@ interface OptionType {
 }
 
 interface DropdownProps<T extends string> {
-  value: T | null;
+  value: T[];
   options: readonly T[];
   placeholder: string;
-  onChange: (value: T) => void;
+  onChange: (value: T[]) => void;
 }
 
 export const Dropdown = <T extends string>({
@@ -23,15 +23,20 @@ export const Dropdown = <T extends string>({
     label: opt,
     value: opt,
   }));
+
   const isMobile = useScreenStore();
 
-  const selectedOption =
-    selectOptions.find((opt) => opt.value === value) || null;
+  const selectedOptions = selectOptions.filter((opt) =>
+    value.includes(opt.value as T)
+  );
 
   return (
     <Select
-      value={selectedOption}
-      onChange={(option) => onChange(option?.value as T)}
+      isMulti
+      value={selectedOptions}
+      onChange={(selected) =>
+        onChange((selected as OptionType[]).map((opt) => opt.value as T))
+      }
       options={selectOptions}
       placeholder={placeholder}
       isClearable
@@ -47,11 +52,11 @@ export const Dropdown = <T extends string>({
               }),
               clearIndicator: (base) => ({
                 ...base,
-                padding: "0px", // ← 여기서 패딩 조절
+                padding: "0px",
               }),
               valueContainer: (base) => ({
                 ...base,
-                padding: "0 5px", // 여기서 선택된 값 영역 padding 조절
+                padding: "0 5px",
               }),
               option: (base, state) => ({
                 ...base,
