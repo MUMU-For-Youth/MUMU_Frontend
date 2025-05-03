@@ -11,24 +11,31 @@ import {
   ApiEduResponse,
   EduWithMarker,
 } from "../types/responses";
+import { useEduFilterStore } from "../store/useEduFilterStore";
 
 const EducationMap: React.FC = () => {
   const [eduList, setEduList] = useState<EduWithMarker[]>([]); // 교육 리스트 상태
+  const { district, category, status } = useEduFilterStore();
 
   useEffect(() => {
     const fetch = async () => {
       try {
+        const params = new URLSearchParams();
+        if (district) params.append("region", district);
+        if (category) params.append("field", category);
+        if (status) params.append("status", status);
+
         const [eduListRes, markerRes] = await Promise.all([
-          axios.get<ApiEduResponse[]>(`${baseURL}/api/edu`),
+          axios.get<ApiEduResponse[]>(
+            `${baseURL}/api/edu?${params.toString()}`
+          ),
           axios.get<ApiEduMarkerResponse[]>(`${baseURL}/api/edu/marker`),
         ]);
 
         const merged: EduWithMarker[] = eduListRes.data
           .map((edu) => {
             const marker = markerRes.data.find((m) => m.eduId === edu.eduId);
-
             if (!marker) return null;
-
             return {
               ...edu,
               lat: marker.eduLocationLatitude!,
@@ -44,7 +51,7 @@ const EducationMap: React.FC = () => {
     };
 
     fetch();
-  }, []);
+  }, [district, category, status]);
 
   return (
     <EducationMapContainer>

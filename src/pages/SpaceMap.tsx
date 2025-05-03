@@ -11,6 +11,7 @@ import {
   ApiSpaceResponse,
   SpaceWithMarker,
 } from "@/types/responses";
+import { useSpaceFilterStore } from "../store/useSpaceFilterStore";
 
 /**
  * SpaceMap 페이지
@@ -20,21 +21,28 @@ import {
  */
 const SpaceMap: React.FC = () => {
   const [spaceList, setSpaceList] = useState<SpaceWithMarker[]>([]); // 교육 리스트 상태
+  const { district, target, facility } = useSpaceFilterStore();
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const [eduListRes, markerRes] = await Promise.all([
-          axios.get<ApiSpaceResponse[]>(`${baseURL}/api/space`),
+        const params = new URLSearchParams();
+        if (district) params.append("region", district);
+        if (target) params.append("target", target);
+        if (facility) params.append("type", facility); // 백엔드에서 받는 key에 맞춰서 "type"으로 예시
+
+        const [spaceListRes, markerRes] = await Promise.all([
+          axios.get<ApiSpaceResponse[]>(
+            `${baseURL}/api/space?${params.toString()}`
+          ),
           axios.get<ApiSpaceMarkerResponse[]>(`${baseURL}/api/space/marker`),
         ]);
 
-        const merged: SpaceWithMarker[] = eduListRes.data
+        const merged: SpaceWithMarker[] = spaceListRes.data
           .map((space) => {
             const marker = markerRes.data.find(
               (m) => m.spaceId === space.spaceId
             );
-
             if (!marker) return null;
 
             return {
@@ -52,7 +60,7 @@ const SpaceMap: React.FC = () => {
     };
 
     fetch();
-  }, []);
+  }, [district, target, facility]);
 
   return (
     <SpaceMapContainer>
