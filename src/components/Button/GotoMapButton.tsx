@@ -20,7 +20,6 @@ const GotoMapButton: React.FC<GotoMapButtonProps> = ({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    console.log(type);
     navigate(`/${type.trim()}-map`);
   };
 
