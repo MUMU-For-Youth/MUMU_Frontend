@@ -1,14 +1,27 @@
 import { useNavigate } from "react-router-dom";
 import { BaseButton } from "../../styles/common";
 
+type DetailType = "education" | "space";
+
 interface GotoDetailButtonProps {
-  id: string;
+  spaceId?: string;
+  eduId?: number;
+  type: DetailType;
 }
 
-const GotoDetailButton: React.FC = () => {
+const GotoDetailButton: React.FC<GotoDetailButtonProps> = ({
+  spaceId,
+  eduId,
+  type,
+}) => {
   const navigate = useNavigate();
 
-  return <BaseButton onClick={() => navigate("/")}>자세히보기</BaseButton>;
+  const handleClick = () => {
+    console.log(type, spaceId, eduId);
+    navigate(`/detail/${type}/${spaceId || eduId}`);
+  };
+
+  return <BaseButton onClick={handleClick}>자세히보기</BaseButton>;
 };
 
 export default GotoDetailButton;

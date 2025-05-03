@@ -1,5 +1,4 @@
-import React from "react";
-import { BrowserRouter as Router } from "react-router-dom";
+import { HashRouter as Router } from "react-router-dom";
 import styled from "styled-components";
 import { createGlobalStyle } from "styled-components";
 import Navigation from "./components/Navigation";
@@ -18,7 +17,7 @@ const GlobalStyle = createGlobalStyle`
   }
     
   html, body {
-    overflow: hidden;   /* 최악의 경우 body에도 */
+    //overflow: hidden;   /* 최악의 경우 body에도 */
   }
 
   body {

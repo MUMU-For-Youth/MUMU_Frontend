@@ -4,7 +4,7 @@ import { createGlobalStyle } from "styled-components";
 export const GlobalFonts = createGlobalStyle`
   @font-face {
     font-family: 'NanumSquareRound';
-    src: url('/fonts/NanumSquareRoundR.ttf') format('truetype');
+    src: url('${process.env.PUBLIC_URL}/fonts/NanumSquareRoundR.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -12,7 +12,7 @@ export const GlobalFonts = createGlobalStyle`
 
   @font-face {
     font-family: 'NanumSquareRound';
-    src: url('/fonts/NanumSquareRoundB.ttf') format('truetype');
+    src: url('${process.env.PUBLIC_URL}/fonts/NanumSquareRoundB.ttf') format('truetype');
     font-weight: bold;
     font-style: normal;
     font-display: swap;
