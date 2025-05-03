@@ -47,11 +47,31 @@ export const EDU_STATUS_OPTIONS = ["모집 전", "모집 중", "모집종료"] a
 export type EduStatus = (typeof EDU_STATUS_OPTIONS)[number];
 
 // 공간 대상자
-export const SPACE_TARGET_OPTIONS = ["전체", "청년", "예술가"] as const;
+export const SPACE_TARGET_OPTIONS = [
+  "전체",
+  "서울시민",
+  "10대",
+  "20대",
+  "30대",
+  "40대",
+  "여성",
+  "특이조건",
+] as const;
 export type SpaceTarget = (typeof SPACE_TARGET_OPTIONS)[number];
 
 // 공간 시설유형
-export const SPACE_FACILITY_OPTIONS = ["도서관", "기업"] as const;
+export const SPACE_FACILITY_OPTIONS = [
+  "민원 등 기타",
+  "청년공간",
+  "주민공유공간",
+  "다목적실",
+  "공연장",
+  "회의실",
+  "강의실",
+  "강당",
+  "캠핑장",
+  "녹화장소",
+] as const;
 export type SpaceFacility = (typeof SPACE_FACILITY_OPTIONS)[number];
 
 export type EduFilterType = "district" | "category" | "status";
