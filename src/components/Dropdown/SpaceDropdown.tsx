@@ -4,7 +4,7 @@ import {
   SPACE_TARGET_OPTIONS,
   SpaceFilterType,
 } from "../../types/filters";
-import { Dropdown } from "./\bDropdown";
+import { Dropdown } from "./Dropdown";
 import { useSpaceFilterStore } from "../../store/useSpaceFilterStore";
 
 interface SpaceDropdownProps {

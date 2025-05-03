@@ -5,7 +5,7 @@ import {
   EduFilterType,
 } from "../../types/filters";
 import { useEduFilterStore } from "../../store/useEduFilterStore";
-import { Dropdown } from "./\bDropdown";
+import { Dropdown } from "./Dropdown";
 
 interface EduDropdownProps {
   type: EduFilterType;
