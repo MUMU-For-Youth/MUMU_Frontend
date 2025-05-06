@@ -30,11 +30,15 @@ const DropdownContainer: React.FC<DropdownContainerProps> = ({ type }) => {
 
 const Wrapper = styled.div`
   position: absolute;
-  top: 20px;
+  top: 30px;
   left: 20px;
   z-index: 10;
   display: flex;
   gap: 10px;
+
+  @media (max-width: 600px) {
+    left: 0;
+  }
 `;
 
 export default DropdownContainer;

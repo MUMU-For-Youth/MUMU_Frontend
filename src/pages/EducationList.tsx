@@ -4,6 +4,7 @@ import axios from "axios";
 import Card from "../components/Card";
 import { ApiEduResponse } from "../types/responses";
 import { baseURL } from "../api/api";
+import DropdownContainer from "../components/Dropdown/DropdownContainer";
 
 // 무료 교육 목록을 보여주는 컴포넌트
 const EducationList: React.FC = () => {
@@ -38,7 +39,11 @@ const EducationList: React.FC = () => {
   return (
     <ScrollWrapper>
       <EducationListContainer>
-        <h1>무료 교육 목록</h1>
+        <Header>
+          <Title>무료 교육 목록</Title>
+          <DropdownContainer type="education" />
+        </Header>
+
         <CardGrid>
           {/* 교육 데이터를 순회하며 카드 렌더링 */}
           {educationList.map((edu) => (
@@ -56,7 +61,7 @@ export default EducationList;
 
 // 스크롤 가능한 전체 래퍼
 const ScrollWrapper = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   overflow-y: auto;
   box-sizing: border-box;
@@ -74,12 +79,24 @@ const EducationListContainer = styled.div`
   box-sizing: border-box;
 `;
 
+const Header = styled.div`
+  width: 100%;
+  height: 80px;
+  position: relative;
+`;
+
+const Title = styled.h1`
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+`;
+
 // 카드 그리드 레이아웃
 const CardGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 24px;
-  margin-top: 20px;
   justify-items: center;
   align-items: start;
 
