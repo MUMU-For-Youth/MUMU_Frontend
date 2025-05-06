@@ -3,43 +3,50 @@ import styled from "styled-components";
 import axios from "axios";
 import Card from "../components/Card";
 import { ApiEduResponse } from "../types/responses";
+import { baseURL } from "../api/api";
 
+// 무료 교육 목록을 보여주는 컴포넌트
 const EducationList: React.FC = () => {
+  // 교육 데이터 상태
   const [educationList, setEducationList] = useState<ApiEduResponse[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  // 인증 토큰 상태 (현재는 null로 초기화)
+  const [token, setToken] = useState<string | null>(null);
 
+  // 컴포넌트 마운트 및 token 변경 시 교육 데이터 fetch
   useEffect(() => {
     const fetchEducationData = async () => {
       try {
+        // API로부터 교육 데이터 받아오기
         const response = await axios.get<ApiEduResponse[]>(
-          "http://43.201.111.31:8080/api/edu"
+          `${baseURL}/api/edu`,
+          {
+            headers: {
+              Authorization: token ? `Bearer ${token}` : "null",
+            },
+          }
         );
         setEducationList(response.data);
       } catch (error) {
+        // 에러 발생 시 콘솔에 출력
         console.error("교육 정보를 불러오는 데 실패했습니다.", error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchEducationData();
-  }, []);
+  }, [token]);
 
   return (
     <ScrollWrapper>
       <EducationListContainer>
         <h1>무료 교육 목록</h1>
-        {loading ? (
-          <p>로딩 중...</p>
-        ) : (
-          <CardGrid>
-            {educationList.map((edu) => (
-              <GridCardWrapper key={edu.eduId}>
-                <Card type="education" data={edu} />
-              </GridCardWrapper>
-            ))}
-          </CardGrid>
-        )}
+        <CardGrid>
+          {/* 교육 데이터를 순회하며 카드 렌더링 */}
+          {educationList.map((edu) => (
+            <GridCardWrapper key={edu.eduId}>
+              <Card type="education" data={edu} />
+            </GridCardWrapper>
+          ))}
+        </CardGrid>
       </EducationListContainer>
     </ScrollWrapper>
   );
@@ -47,6 +54,7 @@ const EducationList: React.FC = () => {
 
 export default EducationList;
 
+// 스크롤 가능한 전체 래퍼
 const ScrollWrapper = styled.div`
   width: 100vw;
   height: 100vh;
@@ -59,12 +67,14 @@ const ScrollWrapper = styled.div`
   }
 `;
 
+// 교육 리스트 컨테이너
 const EducationListContainer = styled.div`
   padding: 20px;
   min-height: 100vh;
   box-sizing: border-box;
 `;
 
+// 카드 그리드 레이아웃
 const CardGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -83,6 +93,7 @@ const CardGrid = styled.div`
   }
 `;
 
+// 각 카드의 래퍼
 const GridCardWrapper = styled.div`
   width: 100%;
   max-width: 420px;

@@ -3,16 +3,22 @@ import styled from "styled-components";
 import axios from "axios";
 import Card from "../components/Card";
 import { ApiSpaceResponse } from "../types/responses";
+import { baseURL } from "../api/api";
 
+// 무료 공간 목록을 보여주는 컴포넌트
 const SpaceList: React.FC = () => {
+  // 공간 데이터 상태
   const [spaces, setSpaces] = useState<ApiSpaceResponse[]>([]);
-  const [token, setToken] = useState<string | null>(null); // 실제 토큰 로직과 연동
+  // 인증 토큰 상태 (현재는 null로 초기화)
+  const [token, setToken] = useState<string | null>(null);
 
+  // 컴포넌트 마운트 및 token 변경 시 공간 데이터 fetch
   useEffect(() => {
     const fetchSpaces = async () => {
       try {
+        // API로부터 공간 데이터 받아오기
         const response = await axios.get<ApiSpaceResponse[]>(
-          "http://43.201.111.31:8080/api/space",
+          `${baseURL}/api/space`,
           {
             headers: {
               Authorization: token ? `Bearer ${token}` : "null",
@@ -21,6 +27,7 @@ const SpaceList: React.FC = () => {
         );
         setSpaces(response.data);
       } catch (error) {
+        // 에러 발생 시 콘솔에 출력
         console.error("공간 데이터를 불러오지 못했습니다:", error);
       }
     };
@@ -33,6 +40,7 @@ const SpaceList: React.FC = () => {
       <SpaceListContainer>
         <h1>무료공간</h1>
         <CardGrid>
+          {/* 공간 데이터를 순회하며 카드 렌더링 */}
           {spaces.map((space) => (
             <GridCardWrapper key={space.spaceId}>
               <Card type="space" data={space} />
@@ -46,6 +54,7 @@ const SpaceList: React.FC = () => {
 
 export default SpaceList;
 
+// 스크롤 가능한 전체 래퍼
 const SpaceListScrollWrapper = styled.div`
   width: 100vw;
   height: 100vh;
@@ -58,12 +67,14 @@ const SpaceListScrollWrapper = styled.div`
   }
 `;
 
+// 공간 리스트 컨테이너
 const SpaceListContainer = styled.div`
   padding: 20px;
   min-height: 100vh;
   box-sizing: border-box;
 `;
 
+// 카드 그리드 레이아웃
 const CardGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -82,6 +93,7 @@ const CardGrid = styled.div`
   }
 `;
 
+// 각 카드의 래퍼
 const GridCardWrapper = styled.div`
   width: 100%;
   max-width: 420px;
