@@ -2,13 +2,26 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import BookmarkOff from "../../assets/icons/UnBookmarkIcon.svg";
 import BookmarkOn from "../../assets/icons/BookmarkIcon.svg";
+import { useAuthStore } from "../../store/useAuthStore";
 
-const BookMarkIconButton: React.FC = () => {
-  const [isBookmarked, setIsBookmarked] = useState(false);
+interface BookMarkIconButtonProps {
+  handleBookmark: () => void; // 외부에서 전달받을 클릭 핸들러
+  isBookmarked: boolean;
+}
+
+const BookMarkIconButton: React.FC<BookMarkIconButtonProps> = ({
+  handleBookmark,
+  isBookmarked,
+}) => {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const handleClick = () => {
-    setIsBookmarked((prev) => !prev);
-    // TODO: 여기에 북마크 API 연동 추가 가능
+    if (!isAuthenticated) {
+      alert("로그인 후 사용 가능합니다.");
+      return;
+    }
+
+    handleBookmark(); // 전달받은 핸들러 실행 (API 호출 등)
   };
 
   return (

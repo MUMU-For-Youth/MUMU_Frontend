@@ -7,6 +7,7 @@ import SpaceMap from "../pages/SpaceMap";
 import Mypage from "../pages/Mypage";
 import SignUp from "../pages/SignUp";
 import Detail from "../pages/Detail";
+import KakaoCallback from "../pages/KakaoCallback";
 
 const routes = [
   { path: "/", element: <EducationList /> },
@@ -24,6 +25,7 @@ const AppRoutes: React.FC = () => {
       {routes.map(({ path, element }) => (
         <Route key={path} path={path} element={element} />
       ))}
+      <Route path="/kakao/callback" element={<KakaoCallback />} />
     </Routes>
   );
 };

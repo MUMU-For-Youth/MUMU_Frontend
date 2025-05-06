@@ -31,9 +31,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     })),
 
   setAccessToken: (token) =>
-    set((state) => ({
+    set(() => ({
       accessToken: token,
-      isAuthenticated: !!token && !!state.user,
+      isAuthenticated: !!token, // 수정된 부분
     })),
 
   //frontend에서 로그아웃 시 useAuthStore 사용법

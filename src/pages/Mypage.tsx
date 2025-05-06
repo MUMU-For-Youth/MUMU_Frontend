@@ -1,14 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAuthStore } from "../store/useAuthStore";
 import SlidingPanel from "../components/SlidingPanel";
 import CalendarComponent from "../components/Calendar/CalendarComponent";
 import SlidingTopBar from "../components/SlidingTopBar";
 import Card from "../components/Card";
+import axios from "axios";
+import { baseURL } from "../api/api";
 
 const Mypage: React.FC = () => {
-  const { user } = useAuthStore();
+  const [showEdu, setShowEdu] = useState(true);
+  const [eduList, setEduList] = React.useState([]);
+  const [spaceList, setSpaceList] = React.useState([]);
 
+  useEffect(() => {
+    const fetch = async () => {
+      const accessToken = useAuthStore.getState().accessToken;
+
+      if (!accessToken) return;
+
+      try {
+        const eduRes = await axios.get(
+          `${baseURL}/api/edu/bookmark?access_token=${accessToken}`
+        );
+        const spaceRes = await axios.get(
+          `${baseURL}/api/space/bookmark?access_token=${accessToken}`
+        );
+
+        setEduList(eduRes.data);
+        setSpaceList(spaceRes.data);
+      } catch (err) {
+        console.error("즐겨찾기 여부 확인 실패", err);
+      }
+    };
+    fetch();
+  }, []);
   // 카드 9장 배열 생성 (실제 데이터가 있다면 map으로 대체)
   const cards = Array.from({ length: 9 });
 
@@ -25,13 +51,24 @@ const Mypage: React.FC = () => {
         />
       </StyledSlidingPanelWrapper>
       <StyledTopBarWrapper>
-        <SlidingTopBar />
+        <SlidingTopBar
+          onTabChange={(tabKey) => setShowEdu(tabKey === "Education")}
+        />
       </StyledTopBarWrapper>
-      {/* <CardsGrid>
-        <Card type="space" />
-        <Card type="space" />
-        <Card type="space" />
-      </CardsGrid> */}
+
+      {showEdu ? (
+        <CardsGrid>
+          {eduList.map((edu) => (
+            <Card data={edu} type="education" />
+          ))}
+        </CardsGrid>
+      ) : (
+        <CardsGrid>
+          {spaceList.map((space) => (
+            <Card type="space" data={space} />
+          ))}
+        </CardsGrid>
+      )}
     </MypageContainer>
   );
 };
