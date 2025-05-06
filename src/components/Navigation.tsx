@@ -12,6 +12,7 @@ import SpaceMapIcon from "../assets/icons/SpaceMapIcon.svg";
 import MypageIcon from "../assets/icons/MypageIcon.svg";
 import LoginIcon from "../assets/icons/LoginIcon.svg";
 import LogoutIcon from "../assets/icons/LogoutIcon.svg";
+import MUMULogo from "../assets/logo/Logo.svg";
 
 //네비게이션 바 영역(desktop : width 80px, mobile : height 70px)
 const NavContainer = styled.nav`
@@ -143,7 +144,9 @@ const Navigation: React.FC = () => {
     <NavContainer>
       {/* 로고 영역 (데스크톱 전용) */}
       <LogoContainer>
-        <Logo>{logo}</Logo>
+        <Logo>
+          <img src={MUMULogo} alt="MUMU" style={{ width: "70px" }} />
+        </Logo>
       </LogoContainer>
 
       {/* 네비게이션 항목 영역 (화면 크기에 따라 column or row) */}

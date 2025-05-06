@@ -3,7 +3,7 @@ import NaverMap from "../components/NaverMap";
 import SlidingPanel from "../components/SlidingPanel";
 import DropdownContainer from "../components/Dropdown/DropdownContainer";
 import Card from "../components/Card";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { baseURL } from "../api/api";
 import {
@@ -14,8 +14,11 @@ import {
 import { useEduFilterStore } from "../store/useEduFilterStore";
 
 const EducationMap: React.FC = () => {
-  const [eduList, setEduList] = useState<EduWithMarker[]>([]); // 교육 리스트 상태
+  const [eduList, setEduList] = useState<EduWithMarker[]>([]);
   const { district, category, status } = useEduFilterStore();
+  const [selectedEduId, setSelectedEduId] = useState<number | null>(null);
+
+  const cardRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
   useEffect(() => {
     const fetch = async () => {
@@ -53,30 +56,44 @@ const EducationMap: React.FC = () => {
     fetch();
   }, [district, category, status]);
 
+  // 선택된 eduId로 해당 카드로 스크롤
+  useEffect(() => {
+    if (selectedEduId && cardRefs.current[selectedEduId]) {
+      cardRefs.current[selectedEduId]?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [selectedEduId]);
+
   return (
     <EducationMapContainer>
-      <SlidingPanel />
-      {/* <Dropdown /> */}
       <DropdownContainer type="education" />
       <SlidingPanel
-        // CardListWrapper로 감싸서 패널 내부에서 CardList가 100% 영역을 차지하도록 함
         content={
           <CardListWrapper>
             <CardList>
-              {eduList.map((edu, id) => (
-                <Card key={id} type="education" data={edu} />
+              {eduList.map((edu) => (
+                <div
+                  key={edu.eduId}
+                  ref={(el) => {
+                    cardRefs.current[edu.eduId] = el;
+                  }}
+                >
+                  <Card type="education" data={edu} />
+                </div>
               ))}
             </CardList>
           </CardListWrapper>
         }
       />
-      {/* 지도 영역 */}
       <NaverMap
         eduMarkers={eduList.map((m) => ({
           eduId: m.eduId!,
           lat: m.lat!,
           lng: m.lng!,
         }))}
+        onEduMarkerClick={(eduId) => setSelectedEduId(eduId)}
       />
     </EducationMapContainer>
   );
@@ -106,10 +123,10 @@ const CardList = styled.div`
   overflow-y: auto;
   height: 100%;
   min-height: 0;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 10+ */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
   }
 `;
 

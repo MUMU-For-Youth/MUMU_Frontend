@@ -17,7 +17,6 @@ const GotoDetailButton: React.FC<GotoDetailButtonProps> = ({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    console.log(type, spaceId, eduId);
     navigate(`/detail/${type}/${spaceId || eduId}`);
   };
 
