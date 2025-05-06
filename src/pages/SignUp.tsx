@@ -5,6 +5,7 @@ import { useScreenStore } from "../store/useScreenStore";
 import KakaoLoginButton from "../assets/buttons/KakaoLoginButton.svg";
 import GoogleLoginButton from "../assets/buttons/GoogleLoginButton.svg";
 import { breakpoints, colors } from "../styles/theme";
+import { baseURL } from "../api/api";
 
 const SignUpContainer = styled.div<{ $isMobile: boolean }>`
   width: 100%;
@@ -60,6 +61,16 @@ const SignUp: React.FC = () => {
   const { setUser } = useAuthStore();
   const { isMobile } = useScreenStore();
 
+  const handleKakaoLogin = async () => {
+    try {
+      const res = await fetch(`${baseURL}/auth/kakao/url`);
+      const { url } = await res.json();
+      window.location.href = `${url}&redirect_uri=${window.location.origin}/kakao/callback`;
+    } catch (err) {
+      console.error("카카오 로그인 URL 요청 실패", err);
+    }
+  };
+
   return (
     <SignUpContainer $isMobile={isMobile}>
       <div
@@ -75,7 +86,7 @@ const SignUp: React.FC = () => {
         무무로고
       </div>
       <ButtonContainer>
-        <LoginButton>
+        <LoginButton onClick={handleKakaoLogin}>
           <img src={KakaoLoginButton} alt="kakao login button" />
         </LoginButton>
         <LoginButton>

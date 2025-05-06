@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import GotoMapButtonSvg from "../assets/buttons/GotoMapButton.svg";
 import CardTag from "./CardTag";
@@ -8,6 +8,9 @@ import GotoDetailButton from "./Button/GotoDetailButton";
 import GotoApplyButton from "./Button/GotoApplyButton";
 import BookMarkIconButton from "./Button/BookMarkIconButton";
 import { ApiEduResponse, ApiSpaceResponse } from "../types/responses";
+import { useAuthStore } from "../store/useAuthStore";
+import axios from "axios";
+import { baseURL } from "../api/api";
 
 // 제목이 너무 길면 …으로 줄여주는 함수 (2줄 기준)
 function truncateTitle(title: string, maxLength: number = 40): string {
@@ -29,10 +32,37 @@ interface CardPropsSpace {
 type CardProps = CardPropsEducation | CardPropsSpace;
 
 const Card: React.FC<CardProps> = ({ type, data }) => {
+  const [isBookmarked, setIsBookmarked] = useState(data.bookmarked);
   const title =
     type === "education"
       ? truncateTitle(data.eduName)
       : truncateTitle(data.spaceName);
+
+  const handleBookmark = async () => {
+    const accessToken = useAuthStore.getState().accessToken;
+    if (!accessToken) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    try {
+      if (type === "education") {
+        await axios.post(
+          `${baseURL}/api/edu/bookmark?access_token=${accessToken}`,
+          { eduId: data.eduId }
+        );
+      } else {
+        await axios.post(
+          `${baseURL}/api/space/bookmark?access_token=${accessToken}`,
+          { spaceId: data.spaceId }
+        );
+      }
+      setIsBookmarked((prev) => !prev);
+    } catch (error) {
+      console.error("북마크 실패", error);
+      alert("북마크 요청 중 오류가 발생했습니다.");
+    }
+  };
 
   return (
     <CardOuter>
@@ -49,7 +79,10 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
               {title}
             </CardTitle>
             {/* bookmarked 상태 전달 */}
-            <BookMarkIconButton />
+            <BookMarkIconButton
+              handleBookmark={handleBookmark}
+              isBookmarked={isBookmarked}
+            />
           </CardTitleRow>
 
           <ImageWrapper>

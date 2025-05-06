@@ -7,6 +7,10 @@ import { FlexContainer } from "./styles/common";
 import { GlobalFonts } from "./styles/fonts";
 import AppRoutes from "./routes/AppRoutes";
 import { useWindowResizeStoreSync } from "./hooks/useWindowResizeStoreSync";
+import { useEffect } from "react";
+import { useAuthStore } from "./store/useAuthStore";
+import axios from "axios";
+import { baseURL } from "./api/api";
 
 //전역 스타일, 폰트 적용
 const GlobalStyle = createGlobalStyle`
@@ -46,6 +50,13 @@ const AppContainer = styled(FlexContainer)`
 function App() {
   // 화면 크기 변경 감지 훅 사용
   useWindowResizeStoreSync();
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      useAuthStore.getState().setAccessToken(token);
+    }
+  }, []);
 
   return (
     <Router>
