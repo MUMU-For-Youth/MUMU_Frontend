@@ -15,9 +15,10 @@ interface SpaceDetailProps {
   data: ApiSpaceDetailResponse;
 }
 
-const SpaceDetail: React.FC<SpaceDetailProps> = ({ data }) => {
+const SpaceDetail: React.FC<
+  SpaceDetailProps & { onBookmarkChange?: () => void }
+> = ({ data, onBookmarkChange }) => {
   const navigate = useNavigate();
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(data.bookmarked);
   const accessToken = useAuthStore.getState().accessToken;
 
   const handleBookmark = async () => {
@@ -31,7 +32,8 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ data }) => {
         `${baseURL}/api/space/bookmark?access_token=${accessToken}`,
         { spaceId: data.spaceId }
       );
-      setIsBookmarked((prev) => !prev);
+
+      onBookmarkChange?.();
     } catch (error) {
       console.error("북마크 실패", error);
       alert("북마크 요청 중 오류가 발생했습니다.");
@@ -50,7 +52,7 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ data }) => {
         <HeaderText>무료공간</HeaderText>
         <BookMarkIconButton
           handleBookmark={handleBookmark}
-          isBookmarked={isBookmarked}
+          isBookmarked={data.bookmarked}
         />
       </Header>
       <Title>{data.spaceName}</Title>

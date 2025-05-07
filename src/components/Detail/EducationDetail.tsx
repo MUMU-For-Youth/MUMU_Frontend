@@ -9,15 +9,16 @@ import BookMarkIconButton from "../Button/BookMarkIconButton";
 import { useAuthStore } from "../../store/useAuthStore";
 import axios from "axios";
 import { baseURL } from "../../api/api";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 
 interface EducationDetailProps {
   data: ApiEduDetailResponse;
 }
 
-const EducationDetail: React.FC<EducationDetailProps> = ({ data }) => {
+const EducationDetail: React.FC<
+  EducationDetailProps & { onBookmarkChange?: () => void }
+> = ({ data, onBookmarkChange }) => {
   const navigate = useNavigate();
-  const [bookmarked, setBookmarked] = useState(data.bookmarked);
 
   const handleBookmark = async () => {
     const accessToken = useAuthStore.getState().accessToken;
@@ -33,12 +34,16 @@ const EducationDetail: React.FC<EducationDetailProps> = ({ data }) => {
           eduId: data.eduId,
         }
       );
-      setBookmarked(res.data.bookmarked); // API 응답 기준으로 동기화
+      onBookmarkChange?.();
     } catch (err) {
       console.error("북마크 실패", err);
       alert("북마크 요청 중 오류가 발생했습니다.");
     }
   };
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <Wrapper>
@@ -52,7 +57,7 @@ const EducationDetail: React.FC<EducationDetailProps> = ({ data }) => {
         <HeaderText>무료교육</HeaderText>
         <BookMarkIconButton
           handleBookmark={handleBookmark}
-          isBookmarked={bookmarked}
+          isBookmarked={data.bookmarked}
         />
       </Header>
       <Title>{data.eduName}</Title>

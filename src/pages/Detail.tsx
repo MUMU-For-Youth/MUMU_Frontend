@@ -9,6 +9,7 @@ import { baseURL } from "../api/api";
 import styled from "styled-components";
 import EducationDetail from "../components/Detail/EducationDetail";
 import SpaceDetail from "../components/Detail/SpaceDetail";
+import { useAuthStore } from "../store/useAuthStore";
 
 type DetailType = "education" | "space";
 
@@ -27,32 +28,34 @@ const Detail: React.FC = () => {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const accessToken = useAuthStore.getState().accessToken;
+
+  const fetchDetail = async () => {
+    if (!type || !id) return;
+
+    try {
+      setLoading(true);
+      if (type === "education") {
+        const response = await axios.get<ApiEduDetailResponse>(
+          `${baseURL}/api/edu/${id}?access_token=${accessToken}`
+        );
+        setEduData(response.data);
+      } else if (type === "space") {
+        const response = await axios.get<ApiSpaceDetailResponse>(
+          `${baseURL}/api/space/${id}?access_token=${accessToken}`
+        );
+        setSpaceData(response.data);
+      } else {
+        setError("잘못된 type입니다.");
+      }
+    } catch (err) {
+      setError("데이터를 불러오지 못했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDetail = async () => {
-      if (!type || !id) return;
-
-      try {
-        setLoading(true);
-        if (type === "education") {
-          const response = await axios.get<ApiEduDetailResponse>(
-            `${baseURL}/api/edu/${id}`
-          );
-          setEduData(response.data);
-        } else if (type === "space") {
-          const response = await axios.get<ApiSpaceDetailResponse>(
-            `${baseURL}/api/space/${id}`
-          );
-          setSpaceData(response.data);
-        } else {
-          setError("잘못된 type입니다.");
-        }
-      } catch (err) {
-        setError("데이터를 불러오지 못했습니다.");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchDetail();
   }, [type, id]);
 
@@ -61,9 +64,13 @@ const Detail: React.FC = () => {
 
   return (
     <Wrapper>
-      {type === "education" && eduData && <EducationDetail data={eduData} />}
+      {type === "education" && eduData && (
+        <EducationDetail data={eduData} onBookmarkChange={fetchDetail} />
+      )}
 
-      {type === "space" && spaceData && <SpaceDetail data={spaceData} />}
+      {type === "space" && spaceData && (
+        <SpaceDetail data={spaceData} onBookmarkChange={fetchDetail} />
+      )}
     </Wrapper>
   );
 };

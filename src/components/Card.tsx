@@ -50,7 +50,7 @@ const Card: React.FC<CardProps & { onBookmarkChange?: () => void }> = ({
 
     try {
       if (type === "education") {
-        const res = await axios.post(
+        await axios.post(
           `${baseURL}/api/edu/bookmark?access_token=${accessToken}`,
           {
             eduId: data.eduId,
