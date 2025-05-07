@@ -6,18 +6,24 @@ import GotoApplyButton from "../Button/GotoApplyButton";
 import GotoMapButton from "../Button/GotoMapButton";
 import { breakpoints, colors } from "../../styles/theme";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import axios from "axios";
 import { useAuthStore } from "../../store/useAuthStore";
 import { baseURL } from "../../api/api";
 
 interface SpaceDetailProps {
   data: ApiSpaceDetailResponse;
+  onBookmarkChange?: () => void;
 }
 
-const SpaceDetail: React.FC<
-  SpaceDetailProps & { onBookmarkChange?: () => void }
-> = ({ data, onBookmarkChange }) => {
+const getDisplayValue = (value?: string) =>
+  value && value.trim() !== "" ? value : "미제공";
+
+const isMissing = (value?: string) => !value || value.trim() === "";
+
+const SpaceDetail: React.FC<SpaceDetailProps> = ({
+  data,
+  onBookmarkChange,
+}) => {
   const navigate = useNavigate();
   const accessToken = useAuthStore.getState().accessToken;
 
@@ -32,7 +38,6 @@ const SpaceDetail: React.FC<
         `${baseURL}/api/space/bookmark?access_token=${accessToken}`,
         { spaceId: data.spaceId }
       );
-
       onBookmarkChange?.();
     } catch (error) {
       console.error("북마크 실패", error);
@@ -45,7 +50,7 @@ const SpaceDetail: React.FC<
       <Header>
         <img
           src={CloseArrowIcon}
-          alt=""
+          alt="닫기"
           onClick={() => navigate(-1)}
           style={{ cursor: "pointer" }}
         />
@@ -55,29 +60,47 @@ const SpaceDetail: React.FC<
           isBookmarked={data.bookmarked}
         />
       </Header>
-      <Title>{data.spaceName}</Title>
+      <Title>{getDisplayValue(data.spaceName)}</Title>
       <ContentContainer>
-        <Image src={data.spaceImage} alt="공간 이미지" />
+        <Image
+          src={data.spaceImage || ""}
+          alt="공간 이미지"
+          style={{
+            backgroundColor: isMissing(data.spaceImage)
+              ? colors.gray[100]
+              : undefined,
+          }}
+        />
         <Description>
           <LeftText>이용시간</LeftText>
-          <RightText>{data.spaceTime}</RightText>
+          <RightText isEmpty={isMissing(data.spaceTime)}>
+            {getDisplayValue(data.spaceTime)}
+          </RightText>
         </Description>
         <Description>
           <LeftText>대상자</LeftText>
-          <RightText>{data.spaceTarget}</RightText>
+          <RightText isEmpty={isMissing(data.spaceTarget)}>
+            {getDisplayValue(data.spaceTarget)}
+          </RightText>
         </Description>
         <Description>
           <LeftText>주소</LeftText>
-          <RightText>{data.spaceLocation}</RightText>
+          <RightText isEmpty={isMissing(data.spaceLocation)}>
+            {getDisplayValue(data.spaceLocation)}
+          </RightText>
         </Description>
         <Description>
           <LeftText>전화번호</LeftText>
-          <RightText>{data.contactNumber}</RightText>
+          <RightText isEmpty={isMissing(data.contactNumber)}>
+            {getDisplayValue(data.contactNumber)}
+          </RightText>
         </Description>
         <Description>
           <LeftText>상세설명</LeftText>
         </Description>
-        <div>{data.spaceContent}</div>
+        <RightText isEmpty={isMissing(data.spaceContent)}>
+          {getDisplayValue(data.spaceContent)}
+        </RightText>
       </ContentContainer>
       <ButtonContainer>
         <GotoMapButton type="space" />
@@ -87,8 +110,9 @@ const SpaceDetail: React.FC<
   );
 };
 
-// styled-components 그대로 유지
-// ...
+export default SpaceDetail;
+
+// --- styled-components ---
 
 const Wrapper = styled.div`
   display: flex;
@@ -164,10 +188,11 @@ const LeftText = styled.div`
   color: ${colors.gray[500]};
 `;
 
-const RightText = styled.div`
+const RightText = styled.div<{ isEmpty?: boolean }>`
   flex: 1;
   word-break: break-word;
   white-space: pre-wrap;
   text-align: right;
+  color: ${({ isEmpty }) => (isEmpty ? colors.gray[400] : "#222")};
+  font-size: 1rem;
 `;
-export default SpaceDetail;

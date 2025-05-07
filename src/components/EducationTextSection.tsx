@@ -1,34 +1,54 @@
 import { ApiEduResponse } from "../types/responses";
 import styled from "styled-components";
+import { colors } from "../styles/theme";
+
+// 값이 없을 경우 기본 문구와 스타일 적용
+const getDisplayValue = (value?: string) =>
+  value && value.trim() !== "" ? value : "미제공";
+
+const isMissing = (value?: string) => !value || value.trim() === "";
 
 function EducationTextSection({ data }: { data: ApiEduResponse }) {
   return (
     <CardTextBox>
       <CardRow>
         <CardLabel>일시</CardLabel>
-        <CardTextRight>{data.eduDate}</CardTextRight>
+        <CardTextRight isEmpty={isMissing(data.eduDate)}>
+          {getDisplayValue(data.eduDate)}
+        </CardTextRight>
       </CardRow>
       <CardRow>
         <CardLabel>방식</CardLabel>
-        <CardTextRight>{data.eduMethod}</CardTextRight>
+        <CardTextRight isEmpty={isMissing(data.eduMethod)}>
+          {getDisplayValue(data.eduMethod)}
+        </CardTextRight>
       </CardRow>
       <CardRow>
         <CardLabel>주소</CardLabel>
-        <CardTextRight>{data.eduAddress}</CardTextRight>
+        <CardTextRight isEmpty={isMissing(data.eduAddress)}>
+          {getDisplayValue(data.eduAddress)}
+        </CardTextRight>
       </CardRow>
       <CardRow>
         <CardLabel>일정</CardLabel>
-        <CardTextRight>{data.eduSchedule}</CardTextRight>
+        <CardTextRight isEmpty={isMissing(data.eduSchedule)}>
+          {getDisplayValue(data.eduSchedule)}
+        </CardTextRight>
       </CardRow>
       <CardRow>
         <CardLabel>대상</CardLabel>
-        <CardTextRight>{data.eduTarget}</CardTextRight>
+        <CardTextRight isEmpty={isMissing(data.eduTarget)}>
+          {getDisplayValue(data.eduTarget)}
+        </CardTextRight>
       </CardRow>
     </CardTextBox>
   );
 }
 
-// 상세 정보 영역
+export default EducationTextSection;
+
+// styled-components
+
 const CardTextBox = styled.div`
   font-size: 1.05rem;
   line-height: 1.5;
@@ -42,7 +62,6 @@ const CardTextBox = styled.div`
   }
 `;
 
-// 상세 정보 한 줄
 const CardRow = styled.div`
   display: flex;
   align-items: start;
@@ -53,7 +72,6 @@ const CardRow = styled.div`
   }
 `;
 
-// 상세 정보 라벨
 const CardLabel = styled.div`
   font-weight: bold;
   min-width: 56px;
@@ -68,20 +86,16 @@ const CardLabel = styled.div`
   }
 `;
 
-// 상세 정보 텍스트
-const CardText = styled.div`
-  color: #222;
+const CardText = styled.div<{ isEmpty?: boolean }>`
   font-size: 1.02rem;
   flex: 1;
+  color: ${({ isEmpty }) => (isEmpty ? colors.gray[400] : "#222")};
 
   @media (max-width: 600px) {
     font-size: 0.98rem;
   }
 `;
 
-// 오른쪽 정렬 텍스트
 const CardTextRight = styled(CardText)`
   text-align: right;
 `;
-
-export default EducationTextSection;

@@ -3,21 +3,29 @@ import { ApiEduDetailResponse } from "../../types/responses";
 import CloseArrowIcon from "../../assets/icons/CloseArrowIcon.svg";
 import GotoApplyButton from "../Button/GotoApplyButton";
 import GotoMapButton from "../Button/GotoMapButton";
-import { breakpoints } from "../../styles/theme";
+import { breakpoints, colors } from "../../styles/theme";
 import { useNavigate } from "react-router-dom";
 import BookMarkIconButton from "../Button/BookMarkIconButton";
 import { useAuthStore } from "../../store/useAuthStore";
 import axios from "axios";
 import { baseURL } from "../../api/api";
-import { use, useEffect, useState } from "react";
+import { useEffect } from "react";
 
 interface EducationDetailProps {
   data: ApiEduDetailResponse;
+  onBookmarkChange?: () => void;
 }
 
-const EducationDetail: React.FC<
-  EducationDetailProps & { onBookmarkChange?: () => void }
-> = ({ data, onBookmarkChange }) => {
+// 공백이거나 null이면 "미제공" 표시
+const getDisplayValue = (value?: string) =>
+  value && value.trim() !== "" ? value : "미제공";
+
+const isMissing = (value?: string) => !value || value.trim() === "";
+
+const EducationDetail: React.FC<EducationDetailProps> = ({
+  data,
+  onBookmarkChange,
+}) => {
   const navigate = useNavigate();
 
   const handleBookmark = async () => {
@@ -28,11 +36,9 @@ const EducationDetail: React.FC<
     }
 
     try {
-      const res = await axios.post(
+      await axios.post(
         `${baseURL}/api/edu/bookmark?access_token=${accessToken}`,
-        {
-          eduId: data.eduId,
-        }
+        { eduId: data.eduId }
       );
       onBookmarkChange?.();
     } catch (err) {
@@ -40,10 +46,6 @@ const EducationDetail: React.FC<
       alert("북마크 요청 중 오류가 발생했습니다.");
     }
   };
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   return (
     <Wrapper>
@@ -60,40 +62,64 @@ const EducationDetail: React.FC<
           isBookmarked={data.bookmarked}
         />
       </Header>
-      <Title>{data.eduName}</Title>
+      <Title>{getDisplayValue(data.eduName)}</Title>
       <ContentContainer>
-        <Image src={data.eduImage} alt="교육기관 이미지" />
+        <Image
+          src={data.eduImage || ""}
+          alt="교육기관 이미지"
+          style={{
+            backgroundColor: isMissing(data.eduImage)
+              ? colors.gray[100]
+              : undefined,
+          }}
+        />
         <Description>
           <div>일시</div>
-          <div>{data.eduDate}</div>
+          <DescriptionText isEmpty={isMissing(data.eduDate)}>
+            {getDisplayValue(data.eduDate)}
+          </DescriptionText>
         </Description>
         <Description>
           <div>분야</div>
-          <div>{data.field}</div>
+          <DescriptionText isEmpty={isMissing(data.field)}>
+            {getDisplayValue(data.field)}
+          </DescriptionText>
         </Description>
         <Description>
           <div>방식</div>
-          <div>{data.eduMethod}</div>
+          <DescriptionText isEmpty={isMissing(data.eduMethod)}>
+            {getDisplayValue(data.eduMethod)}
+          </DescriptionText>
         </Description>
         <Description>
           <div>장소</div>
-          <div>{data.eduLocationName}</div>
+          <DescriptionText isEmpty={isMissing(data.eduLocationName)}>
+            {getDisplayValue(data.eduLocationName)}
+          </DescriptionText>
         </Description>
         <Description>
           <div>일정</div>
-          <div>{data.eduSchedule}</div>
+          <DescriptionText isEmpty={isMissing(data.eduSchedule)}>
+            {getDisplayValue(data.eduSchedule)}
+          </DescriptionText>
         </Description>
         <Description>
           <div>대상</div>
-          <div>{data.eduTarget}</div>
+          <DescriptionText isEmpty={isMissing(data.eduTarget)}>
+            {getDisplayValue(data.eduTarget)}
+          </DescriptionText>
         </Description>
         <Description>
           <div>모집정원</div>
-          <div>{data.max_capacity}</div>
+          <DescriptionText isEmpty={isMissing(data.max_capacity?.toString())}>
+            {getDisplayValue(data.max_capacity?.toString())}
+          </DescriptionText>
         </Description>
         <Description>
           <div>강사명</div>
-          <div>{data.eduTeacher}</div>
+          <DescriptionText isEmpty={isMissing(data.eduTeacher)}>
+            {getDisplayValue(data.eduTeacher)}
+          </DescriptionText>
         </Description>
       </ContentContainer>
       <ButtonContainer>
@@ -103,6 +129,10 @@ const EducationDetail: React.FC<
     </Wrapper>
   );
 };
+
+export default EducationDetail;
+
+// styled-components
 
 const Wrapper = styled.div`
   display: flex;
@@ -164,6 +194,13 @@ const Description = styled.div`
   width: 100%;
 `;
 
+const DescriptionText = styled.div<{ isEmpty?: boolean }>`
+  color: ${({ isEmpty }) => (isEmpty ? colors.gray[400] : "#222")};
+  font-size: 1rem;
+  text-align: right;
+  max-width: 70%;
+`;
+
 const ButtonContainer = styled.div`
   display: flex;
   align-items: center;
@@ -171,5 +208,3 @@ const ButtonContainer = styled.div`
   width: 100%;
   gap: 20px;
 `;
-
-export default EducationDetail;
