@@ -6,20 +6,24 @@ import { ApiEduResponse } from "../types/responses";
 import { baseURL } from "../api/api";
 import DropdownContainer from "../components/Dropdown/DropdownContainer";
 import { useAuthStore } from "../store/useAuthStore";
+import { useEduFilterStore } from "../store/useEduFilterStore";
 
-// 무료 교육 목록을 보여주는 컴포넌트
 const EducationList: React.FC = () => {
-  // 교육 데이터 상태
   const [educationList, setEducationList] = useState<ApiEduResponse[]>([]);
   const accessToken = useAuthStore((state) => state.accessToken);
+  const { district, category, status } = useEduFilterStore();
 
   const fetchEducationData = async () => {
     try {
-      const params = accessToken ? { access_token: accessToken } : {};
+      const params = new URLSearchParams();
+      if (district.length > 0) params.append("region", district.join(","));
+      if (category.length > 0) params.append("field", category.join(","));
+      if (status.length > 0) params.append("status", status.join(","));
+      if (accessToken) params.append("access_token", accessToken);
 
-      const response = await axios.get<ApiEduResponse[]>(`${baseURL}/api/edu`, {
-        params,
-      });
+      const response = await axios.get<ApiEduResponse[]>(
+        `${baseURL}/api/edu?${params.toString()}`
+      );
 
       setEducationList(response.data);
     } catch (error) {
@@ -29,13 +33,7 @@ const EducationList: React.FC = () => {
 
   useEffect(() => {
     fetchEducationData();
-  }, []);
-
-  useEffect(() => {
-    if (accessToken) {
-      fetchEducationData(); // 로그인 후 북마크 반영 위해 재요청
-    }
-  }, [accessToken]);
+  }, [district, category, status, accessToken]);
 
   return (
     <ScrollWrapper>
@@ -46,7 +44,6 @@ const EducationList: React.FC = () => {
         </Header>
 
         <CardGrid>
-          {/* 교육 데이터를 순회하며 카드 렌더링 */}
           {educationList.map((edu) => (
             <GridCardWrapper key={edu.eduId}>
               <Card

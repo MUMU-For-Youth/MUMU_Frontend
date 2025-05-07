@@ -6,18 +6,27 @@ import { ApiSpaceResponse } from "../types/responses";
 import { baseURL } from "../api/api";
 import DropdownContainer from "../components/Dropdown/DropdownContainer";
 import { useAuthStore } from "../store/useAuthStore";
+import { useSpaceFilterStore } from "../store/useSpaceFilterStore";
 
 const SpaceList: React.FC = () => {
   const [spaceList, setSpaceList] = useState<ApiSpaceResponse[]>([]);
   const accessToken = useAuthStore((state) => state.accessToken);
+  const { district, target, facility } = useSpaceFilterStore();
 
   const fetchSpaceData = async () => {
     try {
-      const params = accessToken ? { access_token: accessToken } : {};
+      const params = new URLSearchParams();
+      if (district.length > 0) params.append("region", district.join(","));
+      if (target.length > 0) params.append("target", target.join(","));
+      if (facility.length > 0) params.append("type", facility.join(","));
+
+      if (accessToken) params.append("access_token", accessToken);
+
       const response = await axios.get<ApiSpaceResponse[]>(
         `${baseURL}/api/space`,
         { params }
       );
+
       setSpaceList(response.data);
     } catch (error) {
       console.error("공간 정보를 불러오는 데 실패했습니다.", error);
@@ -26,13 +35,7 @@ const SpaceList: React.FC = () => {
 
   useEffect(() => {
     fetchSpaceData();
-  }, []);
-
-  useEffect(() => {
-    if (accessToken) {
-      fetchSpaceData(); // 로그인 후 북마크 반영 위해 재요청
-    }
-  }, [accessToken]);
+  }, [district, target, facility, accessToken]);
 
   return (
     <ScrollWrapper>
