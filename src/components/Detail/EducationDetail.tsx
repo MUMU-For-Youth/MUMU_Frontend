@@ -1,11 +1,15 @@
 import styled from "styled-components";
 import { ApiEduDetailResponse } from "../../types/responses";
 import CloseArrowIcon from "../../assets/icons/CloseArrowIcon.svg";
-import UnBookmarkIcon from "../../assets/icons/UnBookmarkIcon.svg";
 import GotoApplyButton from "../Button/GotoApplyButton";
 import GotoMapButton from "../Button/GotoMapButton";
 import { breakpoints } from "../../styles/theme";
 import { useNavigate } from "react-router-dom";
+import BookMarkIconButton from "../Button/BookMarkIconButton";
+import { useAuthStore } from "../../store/useAuthStore";
+import axios from "axios";
+import { baseURL } from "../../api/api";
+import { useState } from "react";
 
 interface EducationDetailProps {
   data: ApiEduDetailResponse;
@@ -13,17 +17,43 @@ interface EducationDetailProps {
 
 const EducationDetail: React.FC<EducationDetailProps> = ({ data }) => {
   const navigate = useNavigate();
+  const [bookmarked, setBookmarked] = useState(data.bookmarked);
+
+  const handleBookmark = async () => {
+    const accessToken = useAuthStore.getState().accessToken;
+    if (!accessToken) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        `${baseURL}/api/edu/bookmark?access_token=${accessToken}`,
+        {
+          eduId: data.eduId,
+        }
+      );
+      setBookmarked(res.data.bookmarked); // API 응답 기준으로 동기화
+    } catch (err) {
+      console.error("북마크 실패", err);
+      alert("북마크 요청 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <Wrapper>
       <Header>
         <img
           src={CloseArrowIcon}
-          alt=""
+          alt="닫기"
           onClick={() => navigate(-1)}
           style={{ cursor: "pointer" }}
         />
         <HeaderText>무료교육</HeaderText>
-        <img src={UnBookmarkIcon} alt="" />
+        <BookMarkIconButton
+          handleBookmark={handleBookmark}
+          isBookmarked={bookmarked}
+        />
       </Header>
       <Title>{data.eduName}</Title>
       <ContentContainer>
@@ -136,4 +166,5 @@ const ButtonContainer = styled.div`
   width: 100%;
   gap: 20px;
 `;
+
 export default EducationDetail;

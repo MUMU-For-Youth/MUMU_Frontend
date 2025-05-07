@@ -5,36 +5,37 @@ import Card from "../components/Card";
 import { ApiEduResponse } from "../types/responses";
 import { baseURL } from "../api/api";
 import DropdownContainer from "../components/Dropdown/DropdownContainer";
+import { useAuthStore } from "../store/useAuthStore";
 
 // 무료 교육 목록을 보여주는 컴포넌트
 const EducationList: React.FC = () => {
   // 교육 데이터 상태
   const [educationList, setEducationList] = useState<ApiEduResponse[]>([]);
-  // 인증 토큰 상태 (현재는 null로 초기화)
-  const [token, setToken] = useState<string | null>(null);
+  const accessToken = useAuthStore((state) => state.accessToken);
 
-  // 컴포넌트 마운트 및 token 변경 시 교육 데이터 fetch
+  const fetchEducationData = async () => {
+    try {
+      const params = accessToken ? { access_token: accessToken } : {};
+
+      const response = await axios.get<ApiEduResponse[]>(`${baseURL}/api/edu`, {
+        params,
+      });
+
+      setEducationList(response.data);
+    } catch (error) {
+      console.error("교육 정보를 불러오는 데 실패했습니다.", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchEducationData = async () => {
-      try {
-        // API로부터 교육 데이터 받아오기
-        const response = await axios.get<ApiEduResponse[]>(
-          `${baseURL}/api/edu`,
-          {
-            headers: {
-              Authorization: token ? `Bearer ${token}` : "null",
-            },
-          }
-        );
-        setEducationList(response.data);
-      } catch (error) {
-        // 에러 발생 시 콘솔에 출력
-        console.error("교육 정보를 불러오는 데 실패했습니다.", error);
-      }
-    };
-
     fetchEducationData();
-  }, [token]);
+  }, []);
+
+  useEffect(() => {
+    if (accessToken) {
+      fetchEducationData(); // 로그인 후 북마크 반영 위해 재요청
+    }
+  }, [accessToken]);
 
   return (
     <ScrollWrapper>
@@ -48,7 +49,11 @@ const EducationList: React.FC = () => {
           {/* 교육 데이터를 순회하며 카드 렌더링 */}
           {educationList.map((edu) => (
             <GridCardWrapper key={edu.eduId}>
-              <Card type="education" data={edu} />
+              <Card
+                type="education"
+                data={edu}
+                onBookmarkChange={fetchEducationData}
+              />
             </GridCardWrapper>
           ))}
         </CardGrid>

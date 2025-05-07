@@ -25,42 +25,42 @@ const SpaceMap: React.FC = () => {
   const [selectedSpaceId, setSelectedSpaceId] = useState<string | null>(null);
   const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
+  const fetch = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (district.length > 0) params.append("region", district.join(","));
+      if (target.length > 0) params.append("target", target.join(","));
+      if (facility.length > 0) params.append("type", facility.join(","));
+
+      const [spaceListRes, markerRes] = await Promise.all([
+        axios.get<ApiSpaceResponse[]>(
+          `${baseURL}/api/space?${params.toString()}`
+        ),
+        axios.get<ApiSpaceMarkerResponse[]>(`${baseURL}/api/space/marker`),
+      ]);
+
+      const merged: SpaceWithMarker[] = spaceListRes.data
+        .map((space) => {
+          const marker = markerRes.data.find(
+            (m) => m.spaceId === space.spaceId
+          );
+          if (!marker) return null;
+
+          return {
+            ...space,
+            lat: marker.spaceLocationLatitude!,
+            lng: marker.spaceLocationLongitude!,
+          };
+        })
+        .filter(Boolean) as SpaceWithMarker[];
+
+      setSpaceList(merged);
+    } catch (err) {
+      console.error("공간 API 호출 실패", err);
+    }
+  };
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const params = new URLSearchParams();
-        if (district.length > 0) params.append("region", district.join(","));
-        if (target.length > 0) params.append("target", target.join(","));
-        if (facility.length > 0) params.append("type", facility.join(","));
-
-        const [spaceListRes, markerRes] = await Promise.all([
-          axios.get<ApiSpaceResponse[]>(
-            `${baseURL}/api/space?${params.toString()}`
-          ),
-          axios.get<ApiSpaceMarkerResponse[]>(`${baseURL}/api/space/marker`),
-        ]);
-
-        const merged: SpaceWithMarker[] = spaceListRes.data
-          .map((space) => {
-            const marker = markerRes.data.find(
-              (m) => m.spaceId === space.spaceId
-            );
-            if (!marker) return null;
-
-            return {
-              ...space,
-              lat: marker.spaceLocationLatitude!,
-              lng: marker.spaceLocationLongitude!,
-            };
-          })
-          .filter(Boolean) as SpaceWithMarker[];
-
-        setSpaceList(merged);
-      } catch (err) {
-        console.error("공간 API 호출 실패", err);
-      }
-    };
-
     fetch();
   }, [district, target, facility]);
 
@@ -88,7 +88,7 @@ const SpaceMap: React.FC = () => {
                     cardRefs.current[space.spaceId] = el;
                   }}
                 >
-                  <Card type="space" data={space} />
+                  <Card type="space" data={space} onBookmarkChange={fetch} />
                 </div>
               ))}
             </CardList>

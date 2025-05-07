@@ -5,30 +5,34 @@ import Card from "../components/Card";
 import { ApiSpaceResponse } from "../types/responses";
 import { baseURL } from "../api/api";
 import DropdownContainer from "../components/Dropdown/DropdownContainer";
+import { useAuthStore } from "../store/useAuthStore";
 
 const SpaceList: React.FC = () => {
-  const [spaces, setSpaces] = useState<ApiSpaceResponse[]>([]);
-  const [token, setToken] = useState<string | null>(null);
+  const [spaceList, setSpaceList] = useState<ApiSpaceResponse[]>([]);
+  const accessToken = useAuthStore((state) => state.accessToken);
+
+  const fetchSpaceData = async () => {
+    try {
+      const params = accessToken ? { access_token: accessToken } : {};
+      const response = await axios.get<ApiSpaceResponse[]>(
+        `${baseURL}/api/space`,
+        { params }
+      );
+      setSpaceList(response.data);
+    } catch (error) {
+      console.error("공간 정보를 불러오는 데 실패했습니다.", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchSpaces = async () => {
-      try {
-        const response = await axios.get<ApiSpaceResponse[]>(
-          `${baseURL}/api/space`,
-          {
-            headers: {
-              Authorization: token ? `Bearer ${token}` : "null",
-            },
-          }
-        );
-        setSpaces(response.data);
-      } catch (error) {
-        console.error("공간 데이터를 불러오지 못했습니다:", error);
-      }
-    };
+    fetchSpaceData();
+  }, []);
 
-    fetchSpaces();
-  }, [token]);
+  useEffect(() => {
+    if (accessToken) {
+      fetchSpaceData(); // 로그인 후 북마크 반영 위해 재요청
+    }
+  }, [accessToken]);
 
   return (
     <ScrollWrapper>
@@ -39,9 +43,13 @@ const SpaceList: React.FC = () => {
         </Header>
 
         <CardGrid>
-          {spaces.map((space) => (
+          {spaceList.map((space) => (
             <GridCardWrapper key={space.spaceId}>
-              <Card type="space" data={space} />
+              <Card
+                type="space"
+                data={space}
+                onBookmarkChange={fetchSpaceData}
+              />
             </GridCardWrapper>
           ))}
         </CardGrid>
@@ -52,7 +60,8 @@ const SpaceList: React.FC = () => {
 
 export default SpaceList;
 
-// 스크롤 가능한 전체 래퍼
+// ======================= styled-components =======================
+
 const ScrollWrapper = styled.div`
   width: 100vw;
   height: 100vh;
@@ -63,6 +72,12 @@ const ScrollWrapper = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
+`;
+
+const SpaceListContainer = styled.div`
+  padding: 20px;
+  min-height: 100vh;
+  box-sizing: border-box;
 `;
 
 const Header = styled.div`
@@ -78,14 +93,6 @@ const Title = styled.h1`
   text-align: center;
 `;
 
-// 공간 리스트 컨테이너
-const SpaceListContainer = styled.div`
-  padding: 20px;
-  min-height: 100vh;
-  box-sizing: border-box;
-`;
-
-// 카드 그리드 레이아웃
 const CardGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -103,7 +110,6 @@ const CardGrid = styled.div`
   }
 `;
 
-// 각 카드의 래퍼
 const GridCardWrapper = styled.div`
   width: 100%;
   max-width: 420px;

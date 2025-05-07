@@ -1,11 +1,15 @@
 import styled from "styled-components";
 import { ApiSpaceDetailResponse } from "../../types/responses";
 import CloseArrowIcon from "../../assets/icons/CloseArrowIcon.svg";
-import UnBookmarkIcon from "../../assets/icons/UnBookmarkIcon.svg";
+import BookMarkIconButton from "../Button/BookMarkIconButton";
 import GotoApplyButton from "../Button/GotoApplyButton";
 import GotoMapButton from "../Button/GotoMapButton";
 import { breakpoints, colors } from "../../styles/theme";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
+import { useAuthStore } from "../../store/useAuthStore";
+import { baseURL } from "../../api/api";
 
 interface SpaceDetailProps {
   data: ApiSpaceDetailResponse;
@@ -13,6 +17,27 @@ interface SpaceDetailProps {
 
 const SpaceDetail: React.FC<SpaceDetailProps> = ({ data }) => {
   const navigate = useNavigate();
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(data.bookmarked);
+  const accessToken = useAuthStore.getState().accessToken;
+
+  const handleBookmark = async () => {
+    if (!accessToken) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    try {
+      await axios.post(
+        `${baseURL}/api/space/bookmark?access_token=${accessToken}`,
+        { spaceId: data.spaceId }
+      );
+      setIsBookmarked((prev) => !prev);
+    } catch (error) {
+      console.error("북마크 실패", error);
+      alert("북마크 요청 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <Wrapper>
       <Header>
@@ -23,7 +48,10 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ data }) => {
           style={{ cursor: "pointer" }}
         />
         <HeaderText>무료공간</HeaderText>
-        <img src={UnBookmarkIcon} alt="" />
+        <BookMarkIconButton
+          handleBookmark={handleBookmark}
+          isBookmarked={isBookmarked}
+        />
       </Header>
       <Title>{data.spaceName}</Title>
       <ContentContainer>
@@ -56,6 +84,9 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ data }) => {
     </Wrapper>
   );
 };
+
+// styled-components 그대로 유지
+// ...
 
 const Wrapper = styled.div`
   display: flex;

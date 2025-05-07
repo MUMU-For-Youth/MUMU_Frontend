@@ -12,49 +12,51 @@ import {
   EduWithMarker,
 } from "../types/responses";
 import { useEduFilterStore } from "../store/useEduFilterStore";
+import { useAuthStore } from "../store/useAuthStore";
 
 const EducationMap: React.FC = () => {
   const [eduList, setEduList] = useState<EduWithMarker[]>([]);
   const { district, category, status } = useEduFilterStore();
   const [selectedEduId, setSelectedEduId] = useState<number | null>(null);
+  const accessToken = useAuthStore((state) => state.accessToken);
 
   const cardRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
+  const fetch = async () => {
+    try {
+      const params = new URLSearchParams();
+
+      if (district.length > 0) params.append("region", district.join(","));
+      if (category.length > 0) params.append("field", category.join(","));
+      if (status.length > 0) params.append("status", status.join(","));
+      if (accessToken) params.append("access_token", accessToken);
+
+      const [eduListRes, markerRes] = await Promise.all([
+        axios.get<ApiEduResponse[]>(`${baseURL}/api/edu?${params.toString()}`),
+        axios.get<ApiEduMarkerResponse[]>(`${baseURL}/api/edu/marker`),
+      ]);
+
+      const merged: EduWithMarker[] = eduListRes.data
+        .map((edu) => {
+          const marker = markerRes.data.find((m) => m.eduId === edu.eduId);
+          if (!marker) return null;
+          return {
+            ...edu,
+            lat: marker.eduLocationLatitude!,
+            lng: marker.eduLocationLongitude!,
+          };
+        })
+        .filter(Boolean) as EduWithMarker[];
+
+      setEduList(merged);
+    } catch (err) {
+      console.error("교육 API 호출 실패", err);
+    }
+  };
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const params = new URLSearchParams();
-        if (district.length > 0) params.append("region", district.join(","));
-        if (category.length > 0) params.append("field", category.join(","));
-        if (status.length > 0) params.append("status", status.join(","));
-
-        const [eduListRes, markerRes] = await Promise.all([
-          axios.get<ApiEduResponse[]>(
-            `${baseURL}/api/edu?${params.toString()}`
-          ),
-          axios.get<ApiEduMarkerResponse[]>(`${baseURL}/api/edu/marker`),
-        ]);
-
-        const merged: EduWithMarker[] = eduListRes.data
-          .map((edu) => {
-            const marker = markerRes.data.find((m) => m.eduId === edu.eduId);
-            if (!marker) return null;
-            return {
-              ...edu,
-              lat: marker.eduLocationLatitude!,
-              lng: marker.eduLocationLongitude!,
-            };
-          })
-          .filter(Boolean) as EduWithMarker[];
-
-        setEduList(merged);
-      } catch (err) {
-        console.error("교육 API 호출 실패", err);
-      }
-    };
-
     fetch();
-  }, [district, category, status]);
+  }, [district, category, status, accessToken]);
 
   // 선택된 eduId로 해당 카드로 스크롤
   useEffect(() => {
@@ -80,7 +82,7 @@ const EducationMap: React.FC = () => {
                     cardRefs.current[edu.eduId] = el;
                   }}
                 >
-                  <Card type="education" data={edu} />
+                  <Card type="education" data={edu} onBookmarkChange={fetch} />
                 </div>
               ))}
             </CardList>

@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import styled from "styled-components";
 import GotoMapButtonSvg from "../assets/buttons/GotoMapButton.svg";
 import CardTag from "./CardTag";
@@ -11,6 +10,7 @@ import { ApiEduResponse, ApiSpaceResponse } from "../types/responses";
 import { useAuthStore } from "../store/useAuthStore";
 import axios from "axios";
 import { baseURL } from "../api/api";
+import { useState } from "react";
 
 // 제목이 너무 길면 …으로 줄여주는 함수 (2줄 기준)
 function truncateTitle(title: string, maxLength: number = 40): string {
@@ -31,8 +31,11 @@ interface CardPropsSpace {
 
 type CardProps = CardPropsEducation | CardPropsSpace;
 
-const Card: React.FC<CardProps> = ({ type, data }) => {
-  const [isBookmarked, setIsBookmarked] = useState(data.bookmarked);
+const Card: React.FC<CardProps & { onBookmarkChange?: () => void }> = ({
+  type,
+  data,
+  onBookmarkChange,
+}) => {
   const title =
     type === "education"
       ? truncateTitle(data.eduName)
@@ -47,17 +50,21 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
 
     try {
       if (type === "education") {
-        await axios.post(
+        const res = await axios.post(
           `${baseURL}/api/edu/bookmark?access_token=${accessToken}`,
-          { eduId: data.eduId }
+          {
+            eduId: data.eduId,
+          }
         );
       } else {
         await axios.post(
           `${baseURL}/api/space/bookmark?access_token=${accessToken}`,
-          { spaceId: data.spaceId }
+          {
+            spaceId: data.spaceId,
+          }
         );
       }
-      setIsBookmarked((prev) => !prev);
+      onBookmarkChange?.();
     } catch (error) {
       console.error("북마크 실패", error);
       alert("북마크 요청 중 오류가 발생했습니다.");
@@ -81,7 +88,7 @@ const Card: React.FC<CardProps> = ({ type, data }) => {
             {/* bookmarked 상태 전달 */}
             <BookMarkIconButton
               handleBookmark={handleBookmark}
-              isBookmarked={isBookmarked}
+              isBookmarked={data.bookmarked}
             />
           </CardTitleRow>
 
