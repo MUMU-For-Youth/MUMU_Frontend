@@ -8,7 +8,7 @@ import { GlobalFonts } from "./styles/fonts";
 import AppRoutes from "./routes/AppRoutes";
 import { useWindowResizeStoreSync } from "./hooks/useWindowResizeStoreSync";
 import { useEffect } from "react";
-import { useAuthStore } from "./store/useAuthStore";
+import { initializeAuth, useAuthStore } from "./store/useAuthStore";
 import axios from "axios";
 import { baseURL } from "./api/api";
 
@@ -52,10 +52,7 @@ function App() {
   useWindowResizeStoreSync();
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      useAuthStore.getState().setAccessToken(token);
-    }
+    initializeAuth(); // auth 상태를 zustand store와 동기화
   }, []);
 
   return (

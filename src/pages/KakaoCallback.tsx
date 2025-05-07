@@ -1,35 +1,30 @@
+// pages/KakaoCallback.tsx
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { baseURL } from "../api/api";
 import { useAuthStore } from "../store/useAuthStore";
-import axios from "axios";
+import { handleKakaoCallback } from "../utils/auth";
 
 const KakaoCallback: React.FC = () => {
   const navigate = useNavigate();
   const { setAccessToken } = useAuthStore();
 
   useEffect(() => {
-    const handleCallback = async () => {
-      const code = new URL(window.location.href).searchParams.get("code");
-      if (!code) return;
+    const code = new URLSearchParams(window.location.hash.split("?")[1]).get(
+      "code"
+    );
+    console.log("code:", code);
+    if (!code) return;
 
-      try {
-        const res = await axios.post(`${baseURL}/auth/kakao/callback`, {
-          code,
-        });
-        const { accessToken } = res.data;
-
-        // 상태에 저장
+    handleKakaoCallback(code)
+      .then((accessToken) => {
         setAccessToken(accessToken);
-        localStorage.setItem("accessToken", accessToken); // 새로고침 대비
-
-        navigate("/"); // 로그인 후 홈으로 이동
-      } catch (err) {
+        localStorage.setItem("accessToken", accessToken);
+        navigate("/");
+      })
+      .catch((err) => {
         console.error("카카오 로그인 콜백 처리 실패", err);
-      }
-    };
-
-    handleCallback();
+        // 사용자에게 피드백도 고려 가능
+      });
   }, [navigate, setAccessToken]);
 
   return <div>로그인 처리 중입니다...</div>;

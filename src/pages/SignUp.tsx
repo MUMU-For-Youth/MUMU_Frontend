@@ -7,6 +7,7 @@ import GoogleLoginButton from "../assets/buttons/GoogleLoginButton.svg";
 import { breakpoints, colors } from "../styles/theme";
 import { baseURL } from "../api/api";
 import LogoWithText from "../assets/logo/LogoWithText.svg";
+import { redirectToKakaoLogin } from "../utils/auth";
 
 const SignUpContainer = styled.div<{ $isMobile: boolean }>`
   width: 100%;
@@ -64,11 +65,10 @@ const SignUp: React.FC = () => {
 
   const handleKakaoLogin = async () => {
     try {
-      const res = await fetch(`${baseURL}/auth/kakao/url`);
-      const { url } = await res.json();
-      window.location.href = `${url}&redirect_uri=${window.location.origin}/kakao/callback`;
+      await redirectToKakaoLogin();
     } catch (err) {
       console.error("카카오 로그인 URL 요청 실패", err);
+      // 사용자에게 토스트 피드백도 가능
     }
   };
 
