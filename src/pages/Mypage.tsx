@@ -7,6 +7,8 @@ import SlidingTopBar from "../components/SlidingTopBar";
 import Card from "../components/Card";
 import axios from "axios";
 import { baseURL } from "../api/api";
+import { colors } from "../styles/theme";
+import LogoutIcon from "../assets/icons/LogoutIcon.svg";
 
 const Mypage: React.FC = () => {
   const [showEdu, setShowEdu] = useState(true);
@@ -15,7 +17,6 @@ const Mypage: React.FC = () => {
 
   const fetch = async () => {
     const accessToken = useAuthStore.getState().accessToken;
-
     if (!accessToken) return;
 
     try {
@@ -46,6 +47,31 @@ const Mypage: React.FC = () => {
   useEffect(() => {
     fetch();
   }, []);
+
+  const handleLogout = async () => {
+    const accessToken = useAuthStore.getState().accessToken;
+    console.log("logout");
+    if (!accessToken) return;
+    try {
+      await axios.post(
+        `${baseURL}/auth/kakao/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      useAuthStore.setState({ accessToken: null }); // 메모리 상태도 초기화
+      localStorage.removeItem("accessToken");
+      alert("로그아웃 되었습니다.");
+      window.location.href = "/";
+    } catch (err) {
+      console.error("로그아웃 실패", err);
+      alert("로그아웃 요청 중 오류가 발생했습니다.");
+    }
+  };
 
   return (
     <MypageContainer>
@@ -79,6 +105,11 @@ const Mypage: React.FC = () => {
             ))}
           </CardGrid>
         )}
+
+        <Logout onClick={handleLogout}>
+          <img src={LogoutIcon} style={{ width: "25px" }} />
+          로그아웃
+        </Logout>
       </ListContainer>
     </MypageContainer>
   );
@@ -144,4 +175,17 @@ const CardGrid = styled.div`
   gap: 24px;
 `;
 
+const Logout = styled.div`
+  width: 100%;
+  height: 50px;
+  color: ${colors.gray}
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 10px;
+`;
 export default Mypage;
