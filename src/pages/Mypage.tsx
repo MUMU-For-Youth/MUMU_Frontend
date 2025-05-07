@@ -49,54 +49,60 @@ const Mypage: React.FC = () => {
 
   return (
     <MypageContainer>
-      {/* SlidingPanel이 TopBar보다 위에 오도록 TopBar를 Panel 아래에 둠 */}
-      <StyledSlidingPanelWrapper>
-        <StyledSlidingPanel
-          content={
-            <>
-              <CalendarComponent />
-            </>
-          }
-        />
-      </StyledSlidingPanelWrapper>
-      <StyledTopBarWrapper>
-        <SlidingTopBar
-          onTabChange={(tabKey) => setShowEdu(tabKey === "Education")}
-        />
-      </StyledTopBarWrapper>
+      <SlidingPanel
+        content={
+          <>
+            <CalendarComponent />
+          </>
+        }
+      />
 
-      {showEdu ? (
-        <CardsGrid>
-          {eduList.map((edu) => (
-            <Card data={edu} type="education" onBookmarkChange={fetch} />
-          ))}
-        </CardsGrid>
-      ) : (
-        <CardsGrid>
-          {spaceList.map((space) => (
-            <Card type="space" data={space} onBookmarkChange={fetch} />
-          ))}
-        </CardsGrid>
-      )}
+      <SlidingTopBar
+        onTabChange={(tabKey) => setShowEdu(tabKey === "Education")}
+      />
+
+      <ListContainer>
+        {showEdu ? (
+          <CardGrid>
+            {eduList.map((edu) => (
+              <GridCardWrapper>
+                <Card data={edu} type="education" onBookmarkChange={fetch} />
+              </GridCardWrapper>
+            ))}
+          </CardGrid>
+        ) : (
+          <CardGrid>
+            {spaceList.map((space) => (
+              <GridCardWrapper>
+                <Card type="space" data={space} onBookmarkChange={fetch} />
+              </GridCardWrapper>
+            ))}
+          </CardGrid>
+        )}
+      </ListContainer>
     </MypageContainer>
   );
 };
 
 const MypageContainer = styled.div`
+  width: 100%;
+  min-height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
   position: relative;
-  padding: 0;
-  height: 100vh;
-  width: 100vw;
-  overflow-y: scroll;
-  /* 스크롤바 숨기기 (크로스브라우징) */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 10+ */
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
   }
 `;
 
-// SlidingPanel이 TopBar보다 위에 오도록 z-index를 더 높게 설정
+const GridCardWrapper = styled.div`
+  width: 360px; // 또는 원하는 고정값
+  flex-shrink: 0;
+`;
+
 const StyledSlidingPanelWrapper = styled.div`
   position: sticky;
   top: 0;
@@ -104,8 +110,8 @@ const StyledSlidingPanelWrapper = styled.div`
 `;
 
 const StyledSlidingPanel = styled(SlidingPanel)`
-  z-index: 30;
   position: relative;
+  z-index: inherit;
 `;
 
 const StyledTopBarWrapper = styled.div`
@@ -114,16 +120,28 @@ const StyledTopBarWrapper = styled.div`
   top: 0;
   z-index: 10;
   background: #fff;
+  padding: 0 20px;
+
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
 `;
 
-const CardsGrid = styled.div`
+const ListContainer = styled.div`
+  padding: 32px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 24px 16px;
+  }
+`;
+
+const CardGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 32px 24px;
-  justify-items: center;
-  margin: 48px auto 0 auto;
-  max-width: 1300px;
-  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
 `;
 
 export default Mypage;

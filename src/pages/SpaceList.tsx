@@ -66,10 +66,11 @@ export default SpaceList;
 // ======================= styled-components =======================
 
 const ScrollWrapper = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
   overflow-y: auto;
   box-sizing: border-box;
+
   scrollbar-width: none;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
@@ -78,50 +79,47 @@ const ScrollWrapper = styled.div`
 `;
 
 const SpaceListContainer = styled.div`
-  padding: 20px;
-  min-height: 100vh;
+  padding: 32px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 24px 16px;
+  }
 `;
 
 const Header = styled.div`
   width: 100%;
-  height: 80px;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 24px;
+  }
 `;
 
 const Title = styled.h1`
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
-  margin-bottom: 20px;
   text-align: center;
+  margin-bottom: 12px;
+
+  @media (max-width: 768px) {
+    font-size: 22px;
+  }
 `;
 
 const CardGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 24px;
-  justify-items: center;
-  align-items: start;
-
-  @media (max-width: 900px) {
-    grid-template-columns: repeat(auto-fill, minmax(80vw, 1fr));
-  }
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
 `;
 
 const GridCardWrapper = styled.div`
-  width: 100%;
-  max-width: 420px;
-  min-width: 0;
-  display: flex;
-  justify-content: center;
-
-  & > * {
-    width: 100%;
-    min-width: 0;
-  }
+  width: 360px; // 또는 원하는 고정값
+  flex-shrink: 0;
 `;

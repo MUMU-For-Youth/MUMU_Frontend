@@ -5,20 +5,23 @@ import { SpaceDropdown } from "./SpaceDropdown";
 
 interface DropdownContainerProps {
   type: "education" | "space";
+  absolute?: boolean; // 기본은 false
 }
-
-const DropdownContainer: React.FC<DropdownContainerProps> = ({ type }) => {
+const DropdownContainer: React.FC<DropdownContainerProps> = ({
+  type,
+  absolute = false,
+}) => {
   return (
     <>
       {type === "space" && (
-        <Wrapper>
+        <Wrapper $absolute={absolute}>
           <SpaceDropdown type={"district"} />
           <SpaceDropdown type={"target"} />
           <SpaceDropdown type={"facility"} />
         </Wrapper>
       )}
       {type === "education" && (
-        <Wrapper>
+        <Wrapper $absolute={absolute}>
           <EduDropdown type={"district"} />
           <EduDropdown type={"category"} />
           <EduDropdown type={"status"} />
@@ -28,16 +31,16 @@ const DropdownContainer: React.FC<DropdownContainerProps> = ({ type }) => {
   );
 };
 
-const Wrapper = styled.div`
-  position: absolute;
-  top: 30px;
-  left: 20px;
-  z-index: 10;
+const Wrapper = styled.div<{ $absolute?: boolean }>`
+  position: ${({ $absolute }) => ($absolute ? "absolute" : "static")};
+  top: ${({ $absolute }) => ($absolute ? "30px" : "unset")};
+  left: ${({ $absolute }) => ($absolute ? "20px" : "unset")};
+  z-index: 1000;
   display: flex;
   gap: 10px;
-
+  width: 100%;
   @media (max-width: 600px) {
-    left: 0;
+    left: ${({ $absolute }) => ($absolute ? "0" : "unset")};
   }
 `;
 

@@ -70,7 +70,7 @@ const EducationMap: React.FC = () => {
 
   return (
     <EducationMapContainer>
-      <DropdownContainer type="education" />
+      <DropdownContainer type="education" absolute={true} />
       <SlidingPanel
         content={
           <CardListWrapper>

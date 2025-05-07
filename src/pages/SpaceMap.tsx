@@ -12,6 +12,7 @@ import {
   SpaceWithMarker,
 } from "../types/responses";
 import { useSpaceFilterStore } from "../store/useSpaceFilterStore";
+import { useAuthStore } from "../store/useAuthStore";
 
 /**
  * SpaceMap 페이지
@@ -23,6 +24,7 @@ const SpaceMap: React.FC = () => {
   const [spaceList, setSpaceList] = useState<SpaceWithMarker[]>([]); // 교육 리스트 상태
   const { district, target, facility } = useSpaceFilterStore();
   const [selectedSpaceId, setSelectedSpaceId] = useState<string | null>(null);
+  const accessToken = useAuthStore((state) => state.accessToken);
   const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const fetch = async () => {
@@ -31,6 +33,7 @@ const SpaceMap: React.FC = () => {
       if (district.length > 0) params.append("region", district.join(","));
       if (target.length > 0) params.append("target", target.join(","));
       if (facility.length > 0) params.append("type", facility.join(","));
+      if (accessToken) params.append("access_token", accessToken);
 
       const [spaceListRes, markerRes] = await Promise.all([
         axios.get<ApiSpaceResponse[]>(
@@ -75,7 +78,7 @@ const SpaceMap: React.FC = () => {
 
   return (
     <SpaceMapContainer>
-      <DropdownContainer type="space" />
+      <DropdownContainer type="space" absolute={true} />
       {/* 좌측 패널: 공간 카드 리스트 */}
       <SlidingPanel
         content={

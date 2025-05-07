@@ -137,127 +137,110 @@ const Card: React.FC<CardProps & { onBookmarkChange?: () => void }> = ({
 
 export default Card;
 
-// ================== styled-components ==================
-
 const CardOuter = styled.div`
-  padding: 18px 10px;
+  padding: 16px 8px;
   background: transparent;
-
-  @media (max-width: 600px) {
-    padding: 20px 12px 28px;
-    border-radius: 18px;
-  }
 `;
 
 const CardCenterWrapper = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
   width: 100%;
 `;
 
 const CardContainer = styled.div`
-  background: white;
+  background-color: #ffffff;
   border-radius: 16px;
-  padding: 32px 24px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 24px 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  width: 100%;
   max-width: 420px;
-  min-width: 350px;
-  min-height: 560px;
+  min-height: 520px;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-  position: relative;
-  gap: 8px;
+  gap: 12px;
 
   @media (max-width: 600px) {
-    max-width: 98vw;
-    min-width: 0;
-    padding: 28px 18px;
-    gap: 16px;
-    border-radius: 18px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px 16px;
+    border-radius: 14px;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
   }
 `;
 
 const CardTitleRow = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
 `;
 
 const CardTitle = styled.h2`
-  font-size: 1.35rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  height: 53px;
+  color: #222;
   margin: 0;
   flex: 1;
-  color: #222;
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  word-break: break-all;
-  white-space: normal;
-  min-height: calc(1.35rem * 1.2 * 2);
 
   @media (max-width: 600px) {
-    color: #111;
+    font-size: 1.1rem;
   }
 `;
 
 const ImageWrapper = styled.div`
-  position: relative;
   width: 100%;
   height: 180px;
-  display: flex;
-  align-items: stretch;
   overflow: hidden;
+  border-radius: 10px;
+  background-color: #f5f5f5;
 
   @media (max-width: 600px) {
-    height: 130px;
-    border-radius: 10px;
+    height: 140px;
   }
 `;
 
 const CardImage = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  border-radius: 12px;
-  background: #f3f3f3;
-  display: block;
+  object-fit: cover;
 `;
 
 const CardButtonContainer = styled.div`
   display: flex;
-  align-items: center;
-  margin-top: 28px;
-  padding-top: 8px;
-  width: 100%;
-  box-sizing: border-box;
   justify-content: space-between;
-  gap: 5px;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 16px;
+  gap: 8px;
+  border-top: 1px solid #eee;
 
   @media (max-width: 600px) {
-    padding: 16px 0 0;
-    gap: 10px;
+    padding-top: 12px;
+    gap: 6px;
   }
 `;
 
 const IconButton = styled.button`
   background: none;
   border: none;
-  padding: 0;
+  padding: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 38px;
-  transition: transform 0.1s ease-in-out;
+  transition: transform 0.12s ease;
+
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.96);
   }
 
-  @media (max-width: 600px) {
-    margin-right: 10px;
+  img {
+    height: 38px;
+    width: 38px;
   }
 `;
