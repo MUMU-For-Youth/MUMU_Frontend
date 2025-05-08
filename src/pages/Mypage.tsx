@@ -65,7 +65,7 @@ const Mypage: React.FC = () => {
       useAuthStore.setState({ accessToken: null }); // 메모리 상태도 초기화
       localStorage.removeItem("accessToken");
       alert("로그아웃 되었습니다.");
-      window.location.href = "/";
+      window.location.href = "/MUMU_Frontend/";
     } catch (err) {
       console.error("로그아웃 실패", err);
       alert("로그아웃 요청 중 오류가 발생했습니다.");
