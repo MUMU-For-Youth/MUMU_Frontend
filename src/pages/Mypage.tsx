@@ -9,11 +9,14 @@ import axios from "axios";
 import { baseURL } from "../api/api";
 import { colors } from "../styles/theme";
 import LogoutIcon from "../assets/icons/LogoutIcon.svg";
+import { useNavigate } from "react-router-dom";
 
 const Mypage: React.FC = () => {
   const [showEdu, setShowEdu] = useState(true);
   const [eduList, setEduList] = React.useState([]);
   const [spaceList, setSpaceList] = React.useState([]);
+
+  const navigate = useNavigate();
 
   const fetch = async () => {
     const accessToken = useAuthStore.getState().accessToken;
@@ -65,7 +68,7 @@ const Mypage: React.FC = () => {
       useAuthStore.setState({ accessToken: null }); // 메모리 상태도 초기화
       localStorage.removeItem("accessToken");
       alert("로그아웃 되었습니다.");
-      window.location.href = "/MUMU_Frontend/";
+      navigate("/", { replace: true });
     } catch (err) {
       console.error("로그아웃 실패", err);
       alert("로그아웃 요청 중 오류가 발생했습니다.");
