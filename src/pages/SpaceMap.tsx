@@ -13,6 +13,7 @@ import {
 } from "../types/responses";
 import { useSpaceFilterStore } from "../store/useSpaceFilterStore";
 import { useAuthStore } from "../store/useAuthStore";
+import { useSearchParams } from "react-router-dom";
 
 /**
  * SpaceMap 페이지
@@ -27,6 +28,20 @@ const SpaceMap: React.FC = () => {
   const accessToken = useAuthStore((state) => state.accessToken);
   const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const initialSpaceIdFromQuery = searchParams.get("spaceId");
+
+  useEffect(() => {
+    if (initialSpaceIdFromQuery && spaceList.length > 0) {
+      const id = initialSpaceIdFromQuery;
+      const exists = spaceList.some((e) => e.spaceId === id);
+      if (exists) {
+        setSelectedSpaceId(id);
+        setIsPanelOpen(true); // ✅ 자동 열기
+      }
+    }
+  }, [initialSpaceIdFromQuery, spaceList]);
 
   const fetch = async () => {
     try {

@@ -103,7 +103,7 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({
         </RightText>
       </ContentContainer>
       <ButtonContainer>
-        <GotoMapButton type="space" />
+        <GotoMapButton type="space" spaceId={data.spaceId} />
         <GotoApplyButton type="apply" url={data.spaceUrl} />
       </ButtonContainer>
     </Wrapper>

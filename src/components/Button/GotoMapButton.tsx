@@ -20,7 +20,13 @@ const GotoMapButton: React.FC<GotoMapButtonProps> = ({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/${type.trim()}-map`);
+    if (type === "education" && eduId !== undefined) {
+      navigate(`/education-map?eduId=${eduId}`);
+    } else if (type === "space" && spaceId) {
+      navigate(`/space-map?spaceId=${spaceId}`);
+    } else {
+      navigate(`/${type}-map`);
+    }
   };
 
   return (

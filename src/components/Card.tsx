@@ -11,6 +11,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import axios from "axios";
 import { baseURL } from "../api/api";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // 제목이 너무 길면 …으로 줄여주는 함수 (2줄 기준)
 function truncateTitle(title: string, maxLength: number = 40): string {
@@ -36,6 +37,8 @@ const Card: React.FC<CardProps & { onBookmarkChange?: () => void }> = ({
   data,
   onBookmarkChange,
 }) => {
+  const navigate = useNavigate();
+
   const title =
     type === "education"
       ? truncateTitle(data.eduName)
@@ -68,6 +71,14 @@ const Card: React.FC<CardProps & { onBookmarkChange?: () => void }> = ({
     } catch (error) {
       console.error("북마크 실패", error);
       alert("북마크 요청 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleGotoMap = () => {
+    if (type === "education") {
+      navigate(`/education-map?eduId=${(data as ApiEduResponse).eduId}`);
+    } else {
+      navigate(`/space-map?spaceId=${(data as ApiSpaceResponse).spaceId}`);
     }
   };
 
@@ -112,7 +123,11 @@ const Card: React.FC<CardProps & { onBookmarkChange?: () => void }> = ({
           )}
 
           <CardButtonContainer>
-            <IconButton type="button" aria-label="지도보기">
+            <IconButton
+              type="button"
+              aria-label="지도보기"
+              onClick={handleGotoMap}
+            >
               <img src={GotoMapButtonSvg} alt="지도보기" />
             </IconButton>
             <GotoDetailButton

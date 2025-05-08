@@ -13,6 +13,7 @@ import {
 } from "../types/responses";
 import { useEduFilterStore } from "../store/useEduFilterStore";
 import { useAuthStore } from "../store/useAuthStore";
+import { useSearchParams } from "react-router-dom";
 
 const EducationMap: React.FC = () => {
   const [eduList, setEduList] = useState<EduWithMarker[]>([]);
@@ -22,6 +23,20 @@ const EducationMap: React.FC = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   const cardRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+
+  const [searchParams] = useSearchParams();
+  const initialEduIdFromQuery = searchParams.get("eduId");
+
+  useEffect(() => {
+    if (initialEduIdFromQuery && eduList.length > 0) {
+      const id = parseInt(initialEduIdFromQuery, 10);
+      const exists = eduList.some((e) => e.eduId === id);
+      if (exists) {
+        setSelectedEduId(id);
+        setIsPanelOpen(true); // ✅ 자동 열기
+      }
+    }
+  }, [initialEduIdFromQuery, eduList]);
 
   const fetch = async () => {
     try {

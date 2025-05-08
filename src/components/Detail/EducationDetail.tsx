@@ -123,7 +123,7 @@ const EducationDetail: React.FC<EducationDetailProps> = ({
         </Description>
       </ContentContainer>
       <ButtonContainer>
-        <GotoMapButton type="education" />
+        <GotoMapButton type="education" eduId={data.eduId} />
         <GotoApplyButton type="apply" url={data.eduUrl} />
       </ButtonContainer>
     </Wrapper>
