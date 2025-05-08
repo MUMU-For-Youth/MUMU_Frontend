@@ -72,7 +72,7 @@ const Wrapper = styled.div<{ $absolute?: boolean }>`
     position: absolute;
     top: 80px;
     right: 20px;
-    z-index: 999;
+    z-index: 10;
   `};
 `;
 

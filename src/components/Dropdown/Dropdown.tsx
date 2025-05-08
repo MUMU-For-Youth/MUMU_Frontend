@@ -64,6 +64,10 @@ export const Dropdown = <T extends string>({
                 ...base,
                 padding: "0 5px",
               }),
+              menu: (base) => ({
+                ...base,
+                zIndex: 11,
+              }),
             }
           : {
               control: (base) => ({
@@ -81,6 +85,10 @@ export const Dropdown = <T extends string>({
                   ? "#e6f0ff"
                   : "white",
                 color: state.isSelected ? "white" : "#333",
+              }),
+              menu: (base) => ({
+                ...base,
+                zIndex: 11,
               }),
             }
       }
