@@ -98,7 +98,10 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({
         <Description>
           <LeftText>상세설명</LeftText>
         </Description>
-        <RightText isEmpty={isMissing(data.spaceContent)}>
+        <RightText
+          isEmpty={isMissing(data.spaceContent)}
+          style={{ textAlign: "left" }}
+        >
           {getDisplayValue(data.spaceContent)}
         </RightText>
       </ContentContainer>
