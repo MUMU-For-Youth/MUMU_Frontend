@@ -64,8 +64,6 @@ const PanelContainer = styled.div<{ isOpen: boolean }>`
   box-sizing: border-box;
   pointer-events: auto;
   overflow: visible;
-
-  padding-top: 50px;
 `;
 
 // 토글 버튼. 패널의 오른쪽 바깥에 위치

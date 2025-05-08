@@ -9,8 +9,7 @@ import AppRoutes from "./routes/AppRoutes";
 import { useWindowResizeStoreSync } from "./hooks/useWindowResizeStoreSync";
 import { useEffect } from "react";
 import { initializeAuth, useAuthStore } from "./store/useAuthStore";
-import axios from "axios";
-import { baseURL } from "./api/api";
+import FilterResetOnRouteChange from "./components/Dropdown/FilterResetOnRouteChange";
 
 //전역 스타일, 폰트 적용
 const GlobalStyle = createGlobalStyle`
@@ -59,7 +58,7 @@ function App() {
     <Router>
       <GlobalStyle />
       <GlobalFonts />
-
+      <FilterResetOnRouteChange />
       {/* 여기부터가 실질적으로 화면에 띄워지는 영역 */}
       <AppContainer>
         {/* 네비게이션 바 */}
