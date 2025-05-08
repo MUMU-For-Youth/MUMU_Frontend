@@ -26,6 +26,7 @@ const SpaceMap: React.FC = () => {
   const [selectedSpaceId, setSelectedSpaceId] = useState<string | null>(null);
   const accessToken = useAuthStore((state) => state.accessToken);
   const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   const fetch = async () => {
     try {
@@ -81,6 +82,7 @@ const SpaceMap: React.FC = () => {
       <DropdownContainer type="space" absolute={true} />
       {/* 좌측 패널: 공간 카드 리스트 */}
       <SlidingPanel
+        key={selectedSpaceId}
         content={
           <CardListWrapper>
             <CardList>
@@ -97,6 +99,9 @@ const SpaceMap: React.FC = () => {
             </CardList>
           </CardListWrapper>
         }
+        isOpen={isPanelOpen}
+        onToggle={() => setIsPanelOpen((prev) => !prev)}
+        openToMobile={selectedSpaceId ? "mid" : undefined}
       />
       {/* 우측 지도 영역 */}
       <NaverMap
@@ -105,7 +110,10 @@ const SpaceMap: React.FC = () => {
           lat: m.lat!,
           lng: m.lng!,
         }))}
-        onSpaceMarkerClick={(spaceId) => setSelectedSpaceId(spaceId)}
+        onSpaceMarkerClick={(spaceId) => {
+          setSelectedSpaceId(spaceId);
+          setIsPanelOpen(true);
+        }}
       />
     </SpaceMapContainer>
   );

@@ -19,6 +19,7 @@ const EducationMap: React.FC = () => {
   const { district, category, status } = useEduFilterStore();
   const [selectedEduId, setSelectedEduId] = useState<number | null>(null);
   const accessToken = useAuthStore((state) => state.accessToken);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   const cardRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
@@ -72,6 +73,7 @@ const EducationMap: React.FC = () => {
     <EducationMapContainer>
       <DropdownContainer type="education" absolute={true} />
       <SlidingPanel
+        key={selectedEduId}
         content={
           <CardListWrapper>
             <CardList>
@@ -88,6 +90,9 @@ const EducationMap: React.FC = () => {
             </CardList>
           </CardListWrapper>
         }
+        isOpen={isPanelOpen}
+        onToggle={() => setIsPanelOpen((prev) => !prev)}
+        openToMobile={selectedEduId ? "mid" : undefined}
       />
       <NaverMap
         eduMarkers={eduList.map((m) => ({
@@ -95,7 +100,10 @@ const EducationMap: React.FC = () => {
           lat: m.lat!,
           lng: m.lng!,
         }))}
-        onEduMarkerClick={(eduId) => setSelectedEduId(eduId)}
+        onEduMarkerClick={(eduId) => {
+          setSelectedEduId(eduId);
+          setIsPanelOpen(true); // ✅ 마커 클릭 시 패널 열기
+        }}
       />
     </EducationMapContainer>
   );

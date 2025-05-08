@@ -41,7 +41,7 @@ const Wrapper = styled.div<{ $absolute?: boolean }>`
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 5px;
   margin-top: 16px;
   justify-content: ${({ $absolute }) =>
     $absolute ? "flex-end" : "start"}; // ✅ 오른쪽 정렬

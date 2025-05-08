@@ -6,6 +6,8 @@ import { colors } from "../../styles/theme";
 
 interface DesktopSlidingPanelProps {
   content?: React.ReactNode;
+  isOpen?: boolean;
+  onToggle?: () => void;
 }
 
 // 패널과 토글 버튼의 너비 상수
@@ -14,20 +16,28 @@ const TOGGLE_WIDTH = 35;
 
 const DesktopSlidingPanel: React.FC<DesktopSlidingPanelProps> = ({
   content,
+  isOpen,
+  onToggle,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const controlled = isOpen !== undefined && onToggle !== undefined;
+  const open = controlled ? isOpen : internalOpen;
+
+  const toggle = () => {
+    if (controlled) {
+      onToggle!();
+    } else {
+      setInternalOpen((prev) => !prev);
+    }
+  };
 
   return (
-    <Wrapper isOpen={isOpen}>
-      <PanelContainer isOpen={isOpen}>
+    <Wrapper isOpen={open}>
+      <PanelContainer isOpen={open}>
         <Content>{content}</Content>
       </PanelContainer>
-      <PanelToggle
-        isOpen={isOpen}
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label={isOpen ? "패널 닫기" : "패널 열기"}
-      >
-        <img src={isOpen ? CloseArrowIcon : OpenArrowIcon} alt="" />
+      <PanelToggle isOpen={open} onClick={toggle}>
+        <img src={open ? CloseArrowIcon : OpenArrowIcon} alt="" />
       </PanelToggle>
     </Wrapper>
   );
