@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.js": "/MUMU_Frontend/static/js/main.153257b6.js",
+    "main.js": "/MUMU_Frontend/static/js/main.911f1b3c.js",
     "static/media/KakaoLoginButton.svg": "/MUMU_Frontend/static/media/KakaoLoginButton.476d7456d17d818b8ea6d8f744a31a7b.svg",
     "static/media/GoogleLoginButton.svg": "/MUMU_Frontend/static/media/GoogleLoginButton.54ca5382f5763baeed4e907e1799b538.svg",
     "static/media/LogoWithText.svg": "/MUMU_Frontend/static/media/LogoWithText.98a3e83347e0f63b502cc979c2b605c7.svg",
@@ -11,20 +11,17 @@
     "static/media/SpaceMapIcon.svg": "/MUMU_Frontend/static/media/SpaceMapIcon.72af71d94a5d96ab4108d6152456cce6.svg",
     "static/media/EducationListIcon.svg": "/MUMU_Frontend/static/media/EducationListIcon.435ffb84d7382881a2d3ccd8734db87b.svg",
     "static/media/MypageIcon.svg": "/MUMU_Frontend/static/media/MypageIcon.e5195d5788b0ac7c46df1e7ab727ba06.svg",
-    "static/media/CalendarIcon.svg": "/MUMU_Frontend/static/media/CalendarIcon.2c16f458aa692302f66de471e011f416.svg",
     "static/media/MapIcon.svg": "/MUMU_Frontend/static/media/MapIcon.4672e1c3ec81a692aa103dd3d8dd6b5c.svg",
     "static/media/GotoMapButton.svg": "/MUMU_Frontend/static/media/GotoMapButton.245e0b0655ef158cdc60f14c9a90e846.svg",
     "static/media/UnBookmarkIcon.svg": "/MUMU_Frontend/static/media/UnBookmarkIcon.0815d2f4941b5c6276771d91225e2e22.svg",
     "static/media/LoginIcon.svg": "/MUMU_Frontend/static/media/LoginIcon.6112c99cc591f3c7fb6f926ab3a89f80.svg",
     "index.html": "/MUMU_Frontend/index.html",
     "static/media/LogoutIcon.svg": "/MUMU_Frontend/static/media/LogoutIcon.53bd01e93e71317f48c19b52a07afd0b.svg",
-    "static/media/ArrowLeft.svg": "/MUMU_Frontend/static/media/ArrowLeft.8a5e482c6a9f94482e5ee6e3d10ea1f0.svg",
-    "static/media/ArrowRight.svg": "/MUMU_Frontend/static/media/ArrowRight.027fdf77feaa490a45e3735c968c58c5.svg",
     "static/media/CloseArrowIcon.svg": "/MUMU_Frontend/static/media/CloseArrowIcon.d430b2ea68c2010b353a895bccab291c.svg",
     "static/media/OpenArrowIcon.svg": "/MUMU_Frontend/static/media/OpenArrowIcon.c8ddca2afa9d6c22cc83ff2b6ce28d3b.svg",
-    "main.153257b6.js.map": "/MUMU_Frontend/static/js/main.153257b6.js.map"
+    "main.911f1b3c.js.map": "/MUMU_Frontend/static/js/main.911f1b3c.js.map"
   },
   "entrypoints": [
-    "static/js/main.153257b6.js"
+    "static/js/main.911f1b3c.js"
   ]
 }
