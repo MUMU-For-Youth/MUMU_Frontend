@@ -15,6 +15,7 @@ export interface ApiResponse<T> {
 }
 
 export const baseURL = process.env.REACT_APP_API_BASE_URL;
+export const loginURL = process.env.REACT_APP_LOGIN_URL;
 
 // Axios 인스턴스 생성
 const api: AxiosInstance = axios.create({

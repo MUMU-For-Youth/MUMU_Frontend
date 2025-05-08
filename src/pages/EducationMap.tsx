@@ -12,49 +12,67 @@ import {
   EduWithMarker,
 } from "../types/responses";
 import { useEduFilterStore } from "../store/useEduFilterStore";
+import { useAuthStore } from "../store/useAuthStore";
+import { useSearchParams } from "react-router-dom";
 
 const EducationMap: React.FC = () => {
   const [eduList, setEduList] = useState<EduWithMarker[]>([]);
   const { district, category, status } = useEduFilterStore();
   const [selectedEduId, setSelectedEduId] = useState<number | null>(null);
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   const cardRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
+  const [searchParams] = useSearchParams();
+  const initialEduIdFromQuery = searchParams.get("eduId");
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const params = new URLSearchParams();
-        if (district.length > 0) params.append("region", district.join(","));
-        if (category.length > 0) params.append("field", category.join(","));
-        if (status.length > 0) params.append("status", status.join(","));
-
-        const [eduListRes, markerRes] = await Promise.all([
-          axios.get<ApiEduResponse[]>(
-            `${baseURL}/api/edu?${params.toString()}`
-          ),
-          axios.get<ApiEduMarkerResponse[]>(`${baseURL}/api/edu/marker`),
-        ]);
-
-        const merged: EduWithMarker[] = eduListRes.data
-          .map((edu) => {
-            const marker = markerRes.data.find((m) => m.eduId === edu.eduId);
-            if (!marker) return null;
-            return {
-              ...edu,
-              lat: marker.eduLocationLatitude!,
-              lng: marker.eduLocationLongitude!,
-            };
-          })
-          .filter(Boolean) as EduWithMarker[];
-
-        setEduList(merged);
-      } catch (err) {
-        console.error("교육 API 호출 실패", err);
+    if (initialEduIdFromQuery && eduList.length > 0) {
+      const id = parseInt(initialEduIdFromQuery, 10);
+      const exists = eduList.some((e) => e.eduId === id);
+      if (exists) {
+        setSelectedEduId(id);
+        setIsPanelOpen(true); // ✅ 자동 열기
       }
-    };
+    }
+  }, [initialEduIdFromQuery, eduList]);
 
+  const fetch = async () => {
+    try {
+      const params = new URLSearchParams();
+
+      if (district.length > 0) params.append("region", district.join(","));
+      if (category.length > 0) params.append("field", category.join(","));
+      if (status.length > 0) params.append("status", status.join(","));
+      if (accessToken) params.append("access_token", accessToken);
+
+      const [eduListRes, markerRes] = await Promise.all([
+        axios.get<ApiEduResponse[]>(`${baseURL}/api/edu?${params.toString()}`),
+        axios.get<ApiEduMarkerResponse[]>(`${baseURL}/api/edu/marker`),
+      ]);
+
+      const merged: EduWithMarker[] = eduListRes.data
+        .map((edu) => {
+          const marker = markerRes.data.find((m) => m.eduId === edu.eduId);
+          if (!marker) return null;
+          return {
+            ...edu,
+            lat: marker.eduLocationLatitude!,
+            lng: marker.eduLocationLongitude!,
+          };
+        })
+        .filter(Boolean) as EduWithMarker[];
+
+      setEduList(merged);
+    } catch (err) {
+      console.error("교육 API 호출 실패", err);
+    }
+  };
+
+  useEffect(() => {
     fetch();
-  }, [district, category, status]);
+  }, [district, category, status, accessToken]);
 
   // 선택된 eduId로 해당 카드로 스크롤
   useEffect(() => {
@@ -68,8 +86,9 @@ const EducationMap: React.FC = () => {
 
   return (
     <EducationMapContainer>
-      <DropdownContainer type="education" />
+      <DropdownContainer type="education" absolute={true} />
       <SlidingPanel
+        key={selectedEduId}
         content={
           <CardListWrapper>
             <CardList>
@@ -80,12 +99,15 @@ const EducationMap: React.FC = () => {
                     cardRefs.current[edu.eduId] = el;
                   }}
                 >
-                  <Card type="education" data={edu} />
+                  <Card type="education" data={edu} onBookmarkChange={fetch} />
                 </div>
               ))}
             </CardList>
           </CardListWrapper>
         }
+        isOpen={isPanelOpen}
+        onToggle={() => setIsPanelOpen((prev) => !prev)}
+        openToMobile={selectedEduId ? "mid" : undefined}
       />
       <NaverMap
         eduMarkers={eduList.map((m) => ({
@@ -93,7 +115,10 @@ const EducationMap: React.FC = () => {
           lat: m.lat!,
           lng: m.lng!,
         }))}
-        onEduMarkerClick={(eduId) => setSelectedEduId(eduId)}
+        onEduMarkerClick={(eduId) => {
+          setSelectedEduId(eduId);
+          setIsPanelOpen(true); // ✅ 마커 클릭 시 패널 열기
+        }}
       />
     </EducationMapContainer>
   );

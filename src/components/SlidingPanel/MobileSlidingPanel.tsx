@@ -1,65 +1,83 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { animated, useSpring } from "react-spring";
 import { useDrag } from "@use-gesture/react";
 import styled from "styled-components";
 import { colors } from "../../styles/theme";
 
-// 모바일 슬라이딩 패널 Props
 interface MobileSlidingPanelProps {
   content?: React.ReactNode;
+  openTo?: "mid" | "full" | "closed";
 }
 
-// 모바일에서 하단에서 올라오는 슬라이딩 패널 컴포넌트
-const MobileSlidingPanel: React.FC<MobileSlidingPanelProps> = ({ content }) => {
-  // 네비게이션 바 높이 (고정값)
+const MobileSlidingPanel: React.FC<MobileSlidingPanelProps> = ({
+  content,
+  openTo,
+}) => {
   const NAVBAR_HEIGHT = 100;
-  // 패널 전체 높이 계산 (window가 없을 때는 500으로 fallback)
   const panelHeight =
     typeof window !== "undefined" ? window.innerHeight - NAVBAR_HEIGHT : 500;
 
-  // 패널의 3가지 스냅 포인트
-  const MID_POSITION = panelHeight - 300; // 중간 위치
-  const FULLY_OPEN = 0; // 완전히 열린 위치 (상단)
-  const FULLY_CLOSED = panelHeight; // 완전히 닫힌 위치 (하단)
+  const MID_POSITION = panelHeight - 300;
+  const FULLY_OPEN = 0;
+  const FULLY_CLOSED = panelHeight;
 
-  // react-spring으로 y축 위치 애니메이션 상태 관리
   const [{ y }, api] = useSpring(() => ({
     y: FULLY_CLOSED,
     config: { tension: 100, friction: 25 },
   }));
 
-  // 패널을 중간/닫힘 상태로 토글하는 함수 (스와이프 바 클릭 시)
-  const togglePanel = () => {
-    api.start({ y: y.get() === FULLY_CLOSED ? MID_POSITION : FULLY_CLOSED });
+  const [internalOpen, setInternalOpen] = useState(false);
+  const controlled = openTo !== undefined;
+
+  const getTargetY = (position: "mid" | "full" | "closed") => {
+    switch (position) {
+      case "mid":
+        return MID_POSITION;
+      case "full":
+        return FULLY_OPEN;
+      case "closed":
+      default:
+        return FULLY_CLOSED;
+    }
   };
 
-  // 드래그 제스처 바인딩
+  const openY = internalOpen ? MID_POSITION : FULLY_CLOSED;
+
+  useEffect(() => {
+    api.start({ y: openY });
+  }, [openY]);
+
+  useEffect(() => {
+    if (openTo) {
+      setInternalOpen(true); // 내부 상태 true로 바꿈
+      api.start({ y: getTargetY(openTo) });
+    }
+  }, [openTo]);
+
+  const togglePanel = () => {
+    if (controlled) return;
+    setInternalOpen((prev) => !prev);
+  };
+
   const bind = useDrag(
     ({ down, movement: [, my] }) => {
       if (down) {
-        // 드래그 중: y 위치를 실시간으로 업데이트 (범위 제한)
         api.start({
           y: Math.max(FULLY_OPEN, Math.min(FULLY_CLOSED, y.get() + my)),
         });
       } else {
-        // 드래그 끝: 가장 가까운 스냅 포인트로 이동
         const currentY = y.get();
-        const target = getNearestSnapPoint(currentY);
-        api.start({ y: target });
+        const points = [FULLY_OPEN, MID_POSITION, FULLY_CLOSED];
+        const nearest = points.reduce((prev, curr) =>
+          Math.abs(curr - currentY) < Math.abs(prev - currentY) ? curr : prev
+        );
+        setInternalOpen(nearest !== FULLY_CLOSED); // 열린 상태 반영
+        api.start({ y: nearest });
       }
     },
     { from: () => [0, y.get()] }
   );
 
-  // 현재 y 위치에서 가장 가까운 스냅 포인트 반환
-  const getNearestSnapPoint = (currentY: number) => {
-    const points = [FULLY_OPEN, MID_POSITION, FULLY_CLOSED];
-    return points.reduce((prev, curr) =>
-      Math.abs(curr - currentY) < Math.abs(prev - currentY) ? curr : prev
-    );
-  };
-
-  // 애니메이션 적용된 패널 컴포넌트
   const AnimatedPanel = animated(PanelBase);
 
   return (
@@ -70,7 +88,6 @@ const MobileSlidingPanel: React.FC<MobileSlidingPanelProps> = ({ content }) => {
       >
         <SwipeBar onClick={togglePanel} />
         <MobileContentWrapper>
-          {/* 카드가 작아보이도록 내부에 max-width와 scale 적용 */}
           <MobileContent>
             <CardScaleWrapper>{content}</CardScaleWrapper>
           </MobileContent>
@@ -80,9 +97,6 @@ const MobileSlidingPanel: React.FC<MobileSlidingPanelProps> = ({ content }) => {
   );
 };
 
-// ===== styled-components =====
-
-// 패널 전체 컨테이너 (화면 하단 고정)
 const MobileContainer = styled.div`
   position: fixed;
   bottom: 0;
@@ -90,7 +104,6 @@ const MobileContainer = styled.div`
   z-index: 20;
 `;
 
-// 패널 베이스 (슬라이딩 영역)
 const PanelBase = styled.div`
   position: absolute;
   bottom: 0;
@@ -104,7 +117,6 @@ const PanelBase = styled.div`
   flex-direction: column;
 `;
 
-// 스와이프 바 (패널 상단의 작은 바)
 const SwipeBar = styled.div`
   width: 200px;
   height: 5px;
@@ -115,7 +127,6 @@ const SwipeBar = styled.div`
   flex-shrink: 0;
 `;
 
-// 컨텐츠 래퍼 (스크롤 영역)
 const MobileContentWrapper = styled.div`
   flex: 1 1 0;
   min-height: 0;
@@ -124,7 +135,6 @@ const MobileContentWrapper = styled.div`
   overflow: hidden;
 `;
 
-// 실제 컨텐츠 영역 (스크롤 가능)
 const MobileContent = styled.div`
   flex: 1 1 0;
   min-height: 0;
@@ -132,17 +142,16 @@ const MobileContent = styled.div`
   color: white;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 10+ */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
   }
 `;
 
-// 카드가 작아보이도록 scale과 max-width 적용
 const CardScaleWrapper = styled.div`
   width: 100%;
   max-width: 440px;

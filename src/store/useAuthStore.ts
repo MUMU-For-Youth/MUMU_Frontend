@@ -45,3 +45,10 @@ export const useAuthStore = create<AuthState>((set) => ({
       isAuthenticated: false,
     }),
 }));
+
+export const initializeAuth = () => {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    useAuthStore.getState().setAccessToken(token);
+  }
+};

@@ -4,62 +4,73 @@ import axios from "axios";
 import Card from "../components/Card";
 import { ApiSpaceResponse } from "../types/responses";
 import { baseURL } from "../api/api";
+import DropdownContainer from "../components/Dropdown/DropdownContainer";
+import { useAuthStore } from "../store/useAuthStore";
+import { useSpaceFilterStore } from "../store/useSpaceFilterStore";
 
-// 무료 공간 목록을 보여주는 컴포넌트
 const SpaceList: React.FC = () => {
-  // 공간 데이터 상태
-  const [spaces, setSpaces] = useState<ApiSpaceResponse[]>([]);
-  // 인증 토큰 상태 (현재는 null로 초기화)
-  const [token, setToken] = useState<string | null>(null);
+  const [spaceList, setSpaceList] = useState<ApiSpaceResponse[]>([]);
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const { district, target, facility } = useSpaceFilterStore();
 
-  // 컴포넌트 마운트 및 token 변경 시 공간 데이터 fetch
+  const fetchSpaceData = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (district.length > 0) params.append("region", district.join(","));
+      if (target.length > 0) params.append("target", target.join(","));
+      if (facility.length > 0) params.append("type", facility.join(","));
+
+      if (accessToken) params.append("access_token", accessToken);
+
+      const response = await axios.get<ApiSpaceResponse[]>(
+        `${baseURL}/api/space`,
+        { params }
+      );
+
+      setSpaceList(response.data);
+    } catch (error) {
+      console.error("공간 정보를 불러오는 데 실패했습니다.", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchSpaces = async () => {
-      try {
-        // API로부터 공간 데이터 받아오기
-        const response = await axios.get<ApiSpaceResponse[]>(
-          `${baseURL}/api/space`,
-          {
-            headers: {
-              Authorization: token ? `Bearer ${token}` : "null",
-            },
-          }
-        );
-        setSpaces(response.data);
-      } catch (error) {
-        // 에러 발생 시 콘솔에 출력
-        console.error("공간 데이터를 불러오지 못했습니다:", error);
-      }
-    };
-
-    fetchSpaces();
-  }, [token]);
+    fetchSpaceData();
+  }, [district, target, facility, accessToken]);
 
   return (
-    <SpaceListScrollWrapper>
+    <ScrollWrapper>
       <SpaceListContainer>
-        <h1>무료공간</h1>
+        <Header>
+          <Title>무료 공간 목록</Title>
+          <DropdownContainer type="space" />
+        </Header>
+
         <CardGrid>
-          {/* 공간 데이터를 순회하며 카드 렌더링 */}
-          {spaces.map((space) => (
+          {spaceList.map((space) => (
             <GridCardWrapper key={space.spaceId}>
-              <Card type="space" data={space} />
+              <Card
+                type="space"
+                data={space}
+                onBookmarkChange={fetchSpaceData}
+              />
             </GridCardWrapper>
           ))}
         </CardGrid>
       </SpaceListContainer>
-    </SpaceListScrollWrapper>
+    </ScrollWrapper>
   );
 };
 
 export default SpaceList;
 
-// 스크롤 가능한 전체 래퍼
-const SpaceListScrollWrapper = styled.div`
-  width: 100vw;
-  height: 100vh;
+// ======================= styled-components =======================
+
+const ScrollWrapper = styled.div`
+  width: 100%;
+  min-height: 100vh;
   overflow-y: auto;
   box-sizing: border-box;
+
   scrollbar-width: none;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
@@ -67,42 +78,48 @@ const SpaceListScrollWrapper = styled.div`
   }
 `;
 
-// 공간 리스트 컨테이너
 const SpaceListContainer = styled.div`
-  padding: 20px;
-  min-height: 100vh;
+  padding: 32px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
   box-sizing: border-box;
-`;
 
-// 카드 그리드 레이아웃
-const CardGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 24px;
-  margin-top: 20px;
-  justify-items: center;
-  align-items: start;
-
-  @media (max-width: 900px) {
-    grid-template-columns: repeat(auto-fill, minmax(80vw, 1fr));
-  }
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-    gap: 16px;
+  @media (max-width: 768px) {
+    padding: 24px 16px;
   }
 `;
 
-// 각 카드의 래퍼
-const GridCardWrapper = styled.div`
+const Header = styled.div`
   width: 100%;
-  max-width: 420px;
-  min-width: 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
 
-  & > * {
-    width: 100%;
-    min-width: 0;
+  @media (max-width: 768px) {
+    margin-bottom: 24px;
   }
+`;
+
+const Title = styled.h1`
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 12px;
+
+  @media (max-width: 768px) {
+    font-size: 22px;
+  }
+`;
+
+const CardGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+`;
+
+const GridCardWrapper = styled.div`
+  width: 360px; // 또는 원하는 고정값
+  flex-shrink: 0;
 `;

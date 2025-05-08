@@ -24,22 +24,28 @@ export const Dropdown = <T extends string>({
     value: opt,
   }));
 
-  const isMobile = useScreenStore();
-
   const selectedOptions = selectOptions.filter((opt) =>
     value.includes(opt.value as T)
   );
 
+  const isMobile = useScreenStore();
+
   return (
-    <Select
-      isMulti
+    <Select<OptionType, true>
+      isMulti={true}
       value={selectedOptions}
       onChange={(selected) =>
-        onChange((selected as OptionType[]).map((opt) => opt.value as T))
+        onChange(
+          (selected as unknown as OptionType[]).map((opt) => opt.value as T)
+        )
       }
       options={selectOptions}
       placeholder={placeholder}
       isClearable
+      closeMenuOnSelect={false}
+      components={{
+        MultiValue: () => null,
+      }}
       styles={
         isMobile
           ? {
@@ -57,16 +63,6 @@ export const Dropdown = <T extends string>({
               valueContainer: (base) => ({
                 ...base,
                 padding: "0 5px",
-              }),
-              option: (base, state) => ({
-                ...base,
-                fontSize: "11px",
-                backgroundColor: state.isSelected
-                  ? "#007bff"
-                  : state.isFocused
-                  ? "#e6f0ff"
-                  : "white",
-                color: state.isSelected ? "white" : "#333",
               }),
             }
           : {

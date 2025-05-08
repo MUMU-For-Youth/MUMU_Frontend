@@ -12,6 +12,8 @@ import {
   SpaceWithMarker,
 } from "../types/responses";
 import { useSpaceFilterStore } from "../store/useSpaceFilterStore";
+import { useAuthStore } from "../store/useAuthStore";
+import { useSearchParams } from "react-router-dom";
 
 /**
  * SpaceMap 페이지
@@ -23,44 +25,61 @@ const SpaceMap: React.FC = () => {
   const [spaceList, setSpaceList] = useState<SpaceWithMarker[]>([]); // 교육 리스트 상태
   const { district, target, facility } = useSpaceFilterStore();
   const [selectedSpaceId, setSelectedSpaceId] = useState<string | null>(null);
+  const accessToken = useAuthStore((state) => state.accessToken);
   const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const initialSpaceIdFromQuery = searchParams.get("spaceId");
 
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const params = new URLSearchParams();
-        if (district.length > 0) params.append("region", district.join(","));
-        if (target.length > 0) params.append("target", target.join(","));
-        if (facility.length > 0) params.append("type", facility.join(","));
-
-        const [spaceListRes, markerRes] = await Promise.all([
-          axios.get<ApiSpaceResponse[]>(
-            `${baseURL}/api/space?${params.toString()}`
-          ),
-          axios.get<ApiSpaceMarkerResponse[]>(`${baseURL}/api/space/marker`),
-        ]);
-
-        const merged: SpaceWithMarker[] = spaceListRes.data
-          .map((space) => {
-            const marker = markerRes.data.find(
-              (m) => m.spaceId === space.spaceId
-            );
-            if (!marker) return null;
-
-            return {
-              ...space,
-              lat: marker.spaceLocationLatitude!,
-              lng: marker.spaceLocationLongitude!,
-            };
-          })
-          .filter(Boolean) as SpaceWithMarker[];
-
-        setSpaceList(merged);
-      } catch (err) {
-        console.error("공간 API 호출 실패", err);
+    if (initialSpaceIdFromQuery && spaceList.length > 0) {
+      const id = initialSpaceIdFromQuery;
+      const exists = spaceList.some((e) => e.spaceId === id);
+      if (exists) {
+        setSelectedSpaceId(id);
+        setIsPanelOpen(true); // ✅ 자동 열기
       }
-    };
+    }
+  }, [initialSpaceIdFromQuery, spaceList]);
 
+  const fetch = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (district.length > 0) params.append("region", district.join(","));
+      if (target.length > 0) params.append("target", target.join(","));
+      if (facility.length > 0) params.append("type", facility.join(","));
+      if (accessToken) params.append("access_token", accessToken);
+
+      const [spaceListRes, markerRes] = await Promise.all([
+        axios.get<ApiSpaceResponse[]>(
+          `${baseURL}/api/space?${params.toString()}`
+        ),
+        axios.get<ApiSpaceMarkerResponse[]>(`${baseURL}/api/space/marker`),
+      ]);
+
+      const merged: SpaceWithMarker[] = spaceListRes.data
+        .map((space) => {
+          const marker = markerRes.data.find(
+            (m) => m.spaceId === space.spaceId
+          );
+          if (!marker) return null;
+
+          return {
+            ...space,
+            lat: marker.spaceLocationLatitude!,
+            lng: marker.spaceLocationLongitude!,
+          };
+        })
+        .filter(Boolean) as SpaceWithMarker[];
+
+      setSpaceList(merged);
+    } catch (err) {
+      console.error("공간 API 호출 실패", err);
+    }
+  };
+
+  useEffect(() => {
     fetch();
   }, [district, target, facility]);
 
@@ -75,9 +94,10 @@ const SpaceMap: React.FC = () => {
 
   return (
     <SpaceMapContainer>
-      <DropdownContainer type="space" />
+      <DropdownContainer type="space" absolute={true} />
       {/* 좌측 패널: 공간 카드 리스트 */}
       <SlidingPanel
+        key={selectedSpaceId}
         content={
           <CardListWrapper>
             <CardList>
@@ -88,12 +108,15 @@ const SpaceMap: React.FC = () => {
                     cardRefs.current[space.spaceId] = el;
                   }}
                 >
-                  <Card type="space" data={space} />
+                  <Card type="space" data={space} onBookmarkChange={fetch} />
                 </div>
               ))}
             </CardList>
           </CardListWrapper>
         }
+        isOpen={isPanelOpen}
+        onToggle={() => setIsPanelOpen((prev) => !prev)}
+        openToMobile={selectedSpaceId ? "mid" : undefined}
       />
       {/* 우측 지도 영역 */}
       <NaverMap
@@ -102,7 +125,10 @@ const SpaceMap: React.FC = () => {
           lat: m.lat!,
           lng: m.lng!,
         }))}
-        onSpaceMarkerClick={(spaceId) => setSelectedSpaceId(spaceId)}
+        onSpaceMarkerClick={(spaceId) => {
+          setSelectedSpaceId(spaceId);
+          setIsPanelOpen(true);
+        }}
       />
     </SpaceMapContainer>
   );

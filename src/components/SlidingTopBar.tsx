@@ -54,34 +54,34 @@ const SlidingTopBar: React.FC<SlidingTopBarProps> = ({
 
 // 상단 바 전체 컨테이너 스타일
 const BarContainer = styled.div`
-  width: 100vw;
-  min-width: 100vw;
-  max-width: 100vw;
+  width: 100%;
   background: #fff;
   border-bottom: 1.5px solid #eaeaea;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  z-index: 20;
-  left: 0;
+  z-index: 1;
   margin: 0;
   padding: 0;
 `;
 
-// 탭 버튼들을 감싸는 래퍼 스타일
+// 수정된 TabWrapper
 const TabWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  width: 100vw;
-  min-width: 100vw;
-  max-width: 100vw;
-`;
+  width: 100%;
+  max-width: 1280px;
+  padding: 0 20px;
 
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
+`;
 // 개별 탭 버튼 스타일
 const TabButton = styled.button<{ active: boolean }>`
-  flex: 1 1 0;
+  flex: 1 1;
   min-width: 200px;
   height: 60px;
   font-size: 1.08rem;

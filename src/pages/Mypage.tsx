@@ -7,87 +7,133 @@ import SlidingTopBar from "../components/SlidingTopBar";
 import Card from "../components/Card";
 import axios from "axios";
 import { baseURL } from "../api/api";
+import { colors } from "../styles/theme";
+import LogoutIcon from "../assets/icons/LogoutIcon.svg";
 
 const Mypage: React.FC = () => {
   const [showEdu, setShowEdu] = useState(true);
   const [eduList, setEduList] = React.useState([]);
   const [spaceList, setSpaceList] = React.useState([]);
 
+  const fetch = async () => {
+    const accessToken = useAuthStore.getState().accessToken;
+    if (!accessToken) return;
+
+    try {
+      const eduRes = await axios.get(
+        `${baseURL}/api/edu/bookmark?access_token=${accessToken}`
+      );
+      const spaceRes = await axios.get(
+        `${baseURL}/api/space/bookmark?access_token=${accessToken}`
+      );
+
+      //bookmarked: true 추가
+      const eduWithBookmark = eduRes.data.map((edu: any) => ({
+        ...edu,
+        bookmarked: true,
+      }));
+
+      const spaceWithBookmark = spaceRes.data.map((space: any) => ({
+        ...space,
+        bookmarked: true,
+      }));
+      setEduList(eduWithBookmark);
+      setSpaceList(spaceWithBookmark);
+    } catch (err) {
+      console.error("즐겨찾기 여부 확인 실패", err);
+    }
+  };
+
   useEffect(() => {
-    const fetch = async () => {
-      const accessToken = useAuthStore.getState().accessToken;
-
-      if (!accessToken) return;
-
-      try {
-        const eduRes = await axios.get(
-          `${baseURL}/api/edu/bookmark?access_token=${accessToken}`
-        );
-        const spaceRes = await axios.get(
-          `${baseURL}/api/space/bookmark?access_token=${accessToken}`
-        );
-
-        setEduList(eduRes.data);
-        setSpaceList(spaceRes.data);
-      } catch (err) {
-        console.error("즐겨찾기 여부 확인 실패", err);
-      }
-    };
     fetch();
   }, []);
-  // 카드 9장 배열 생성 (실제 데이터가 있다면 map으로 대체)
-  const cards = Array.from({ length: 9 });
+
+  const handleLogout = async () => {
+    const accessToken = useAuthStore.getState().accessToken;
+    console.log("logout");
+    if (!accessToken) return;
+    try {
+      await axios.post(
+        `${baseURL}/auth/kakao/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      useAuthStore.setState({ accessToken: null }); // 메모리 상태도 초기화
+      localStorage.removeItem("accessToken");
+      alert("로그아웃 되었습니다.");
+      window.location.href = "/";
+    } catch (err) {
+      console.error("로그아웃 실패", err);
+      alert("로그아웃 요청 중 오류가 발생했습니다.");
+    }
+  };
 
   return (
     <MypageContainer>
-      {/* SlidingPanel이 TopBar보다 위에 오도록 TopBar를 Panel 아래에 둠 */}
-      <StyledSlidingPanelWrapper>
-        <StyledSlidingPanel
-          content={
-            <>
-              <CalendarComponent />
-            </>
-          }
-        />
-      </StyledSlidingPanelWrapper>
-      <StyledTopBarWrapper>
-        <SlidingTopBar
-          onTabChange={(tabKey) => setShowEdu(tabKey === "Education")}
-        />
-      </StyledTopBarWrapper>
+      <SlidingPanel
+        content={
+          <>
+            <CalendarComponent />
+          </>
+        }
+      />
 
-      {showEdu ? (
-        <CardsGrid>
-          {eduList.map((edu) => (
-            <Card data={edu} type="education" />
-          ))}
-        </CardsGrid>
-      ) : (
-        <CardsGrid>
-          {spaceList.map((space) => (
-            <Card type="space" data={space} />
-          ))}
-        </CardsGrid>
-      )}
+      <SlidingTopBar
+        onTabChange={(tabKey) => setShowEdu(tabKey === "Education")}
+      />
+
+      <ListContainer>
+        {showEdu ? (
+          <CardGrid>
+            {eduList.map((edu) => (
+              <GridCardWrapper>
+                <Card data={edu} type="education" onBookmarkChange={fetch} />
+              </GridCardWrapper>
+            ))}
+          </CardGrid>
+        ) : (
+          <CardGrid>
+            {spaceList.map((space) => (
+              <GridCardWrapper>
+                <Card type="space" data={space} onBookmarkChange={fetch} />
+              </GridCardWrapper>
+            ))}
+          </CardGrid>
+        )}
+
+        <Logout onClick={handleLogout}>
+          <img src={LogoutIcon} style={{ width: "25px" }} />
+          로그아웃
+        </Logout>
+      </ListContainer>
     </MypageContainer>
   );
 };
 
 const MypageContainer = styled.div`
+  width: 100%;
+  min-height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
   position: relative;
-  padding: 0;
-  height: 100vh;
-  width: 100vw;
-  overflow-y: scroll;
-  /* 스크롤바 숨기기 (크로스브라우징) */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 10+ */
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
   }
 `;
 
-// SlidingPanel이 TopBar보다 위에 오도록 z-index를 더 높게 설정
+const GridCardWrapper = styled.div`
+  width: 360px; // 또는 원하는 고정값
+  flex-shrink: 0;
+`;
+
 const StyledSlidingPanelWrapper = styled.div`
   position: sticky;
   top: 0;
@@ -95,8 +141,8 @@ const StyledSlidingPanelWrapper = styled.div`
 `;
 
 const StyledSlidingPanel = styled(SlidingPanel)`
-  z-index: 30;
   position: relative;
+  z-index: inherit;
 `;
 
 const StyledTopBarWrapper = styled.div`
@@ -105,16 +151,41 @@ const StyledTopBarWrapper = styled.div`
   top: 0;
   z-index: 10;
   background: #fff;
+  padding: 0 20px;
+
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
 `;
 
-const CardsGrid = styled.div`
+const ListContainer = styled.div`
+  padding: 32px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 24px 16px;
+  }
+`;
+
+const CardGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 32px 24px;
-  justify-items: center;
-  margin: 48px auto 0 auto;
-  max-width: 1300px;
-  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
 `;
 
+const Logout = styled.div`
+  width: 100%;
+  height: 50px;
+  color: ${colors.gray}
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 10px;
+`;
 export default Mypage;

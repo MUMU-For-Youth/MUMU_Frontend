@@ -13,6 +13,8 @@ import MypageIcon from "../assets/icons/MypageIcon.svg";
 import LoginIcon from "../assets/icons/LoginIcon.svg";
 import LogoutIcon from "../assets/icons/LogoutIcon.svg";
 import MUMULogo from "../assets/logo/Logo.svg";
+import { baseURL } from "../api/api";
+import axios from "axios";
 
 //네비게이션 바 영역(desktop : width 80px, mobile : height 70px)
 const NavContainer = styled.nav`
@@ -119,7 +121,30 @@ const Navigation: React.FC = () => {
   const { isAuthenticated } = useAuthStore(); // 로그인 여부 상태
   const { isMobile } = useScreenStore(); // 현재 화면이 모바일인지 여부
 
-  const logo = "logo"; // 상단 로고 텍스트 (이미지로 변경 예정)
+  const handleLogout = async () => {
+    const accessToken = useAuthStore.getState().accessToken;
+    if (!accessToken) return;
+
+    try {
+      await axios.post(
+        `${baseURL}/auth/kakao/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      useAuthStore.setState({ accessToken: null });
+      localStorage.removeItem("accessToken");
+      alert("로그아웃 되었습니다.");
+      window.location.href = "/";
+    } catch (err) {
+      console.error("로그아웃 실패", err);
+      alert("로그아웃 요청 중 오류가 발생했습니다.");
+    }
+  };
 
   // 기본 네비게이션 항목들 (공통)
   const navItems = [
@@ -195,7 +220,13 @@ const Navigation: React.FC = () => {
           <NavItem
             key={desktopExtraNavItem.path}
             active={location.pathname === desktopExtraNavItem.path}
-            onClick={() => navigate(desktopExtraNavItem.path)}
+            onClick={() => {
+              if (desktopExtraNavItem.label === "로그아웃") {
+                handleLogout();
+              } else {
+                navigate(desktopExtraNavItem.path);
+              }
+            }}
           >
             <NavItemIcon
               src={desktopExtraNavItem.icon}

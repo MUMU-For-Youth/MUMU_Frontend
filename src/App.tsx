@@ -8,9 +8,8 @@ import { GlobalFonts } from "./styles/fonts";
 import AppRoutes from "./routes/AppRoutes";
 import { useWindowResizeStoreSync } from "./hooks/useWindowResizeStoreSync";
 import { useEffect } from "react";
-import { useAuthStore } from "./store/useAuthStore";
-import axios from "axios";
-import { baseURL } from "./api/api";
+import { initializeAuth, useAuthStore } from "./store/useAuthStore";
+import FilterResetOnRouteChange from "./components/Dropdown/FilterResetOnRouteChange";
 
 //전역 스타일, 폰트 적용
 const GlobalStyle = createGlobalStyle`
@@ -52,17 +51,14 @@ function App() {
   useWindowResizeStoreSync();
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      useAuthStore.getState().setAccessToken(token);
-    }
+    initializeAuth(); // auth 상태를 zustand store와 동기화
   }, []);
 
   return (
     <Router>
       <GlobalStyle />
       <GlobalFonts />
-
+      <FilterResetOnRouteChange />
       {/* 여기부터가 실질적으로 화면에 띄워지는 영역 */}
       <AppContainer>
         {/* 네비게이션 바 */}

@@ -1,30 +1,48 @@
-import { ApiEduResponse, ApiSpaceResponse } from "../types/responses";
+import { ApiSpaceResponse } from "../types/responses";
 import styled from "styled-components";
+import { colors } from "../styles/theme";
+
+// 값이 없을 경우 기본 문구와 스타일 적용
+const getDisplayValue = (value?: string) =>
+  value && value.trim() !== "" ? value : "미제공";
+
+const isMissing = (value?: string) => !value || value.trim() === "";
 
 function SpaceTextSection({ data }: { data: ApiSpaceResponse }) {
   return (
     <CardTextBox>
       <CardRow>
         <CardLabel>이용시간</CardLabel>
-        <CardTextRight>{data.spaceTime}</CardTextRight>
+        <CardTextRight isEmpty={isMissing(data.spaceTime)}>
+          {getDisplayValue(data.spaceTime)}
+        </CardTextRight>
       </CardRow>
       <CardRow>
         <CardLabel>대상자</CardLabel>
-        <CardTextRight>{data.spaceTarget}</CardTextRight>
+        <CardTextRight isEmpty={isMissing(data.spaceTarget)}>
+          {getDisplayValue(data.spaceTarget)}
+        </CardTextRight>
       </CardRow>
       <CardRow>
         <CardLabel>장소</CardLabel>
-        <CardTextRight>{data.spaceLocation}</CardTextRight>
+        <CardTextRight isEmpty={isMissing(data.spaceLocation)}>
+          {getDisplayValue(data.spaceLocation)}
+        </CardTextRight>
       </CardRow>
       <CardRow>
         <CardLabel>전화번호</CardLabel>
-        <CardTextRight>{data.contactNumber}</CardTextRight>
+        <CardTextRight isEmpty={isMissing(data.contactNumber)}>
+          {getDisplayValue(data.contactNumber)}
+        </CardTextRight>
       </CardRow>
     </CardTextBox>
   );
 }
 
-// 상세 정보 영역
+export default SpaceTextSection;
+
+// styled-components
+
 const CardTextBox = styled.div`
   font-size: 1.05rem;
   line-height: 1.5;
@@ -38,7 +56,6 @@ const CardTextBox = styled.div`
   }
 `;
 
-// 상세 정보 한 줄
 const CardRow = styled.div`
   display: flex;
   align-items: start;
@@ -49,7 +66,6 @@ const CardRow = styled.div`
   }
 `;
 
-// 상세 정보 라벨
 const CardLabel = styled.div`
   font-weight: bold;
   min-width: 56px;
@@ -64,20 +80,16 @@ const CardLabel = styled.div`
   }
 `;
 
-// 상세 정보 텍스트
-const CardText = styled.div`
-  color: #222;
+const CardText = styled.div<{ isEmpty?: boolean }>`
   font-size: 1.02rem;
   flex: 1;
+  color: ${({ isEmpty }) => (isEmpty ? colors.gray[400] : "#222")};
 
   @media (max-width: 600px) {
     font-size: 0.98rem;
   }
 `;
 
-// 오른쪽 정렬 텍스트
 const CardTextRight = styled(CardText)`
   text-align: right;
 `;
-
-export default SpaceTextSection;
