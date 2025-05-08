@@ -69,6 +69,7 @@ const Mypage: React.FC = () => {
       localStorage.removeItem("accessToken");
       alert("로그아웃 되었습니다.");
       navigate("/", { replace: true });
+      window.location.reload();
     } catch (err) {
       console.error("로그아웃 실패", err);
       alert("로그아웃 요청 중 오류가 발생했습니다.");
