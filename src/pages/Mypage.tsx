@@ -74,13 +74,13 @@ const Mypage: React.FC = () => {
 
   return (
     <MypageContainer>
-      <SlidingPanel
+      {/* <SlidingPanel
         content={
           <>
             <CalendarComponent />
           </>
         }
-      />
+      /> */}
 
       <SlidingTopBar
         onTabChange={(tabKey) => setShowEdu(tabKey === "Education")}

@@ -89,7 +89,11 @@ const SignUp: React.FC = () => {
         <LoginButton onClick={handleKakaoLogin}>
           <img src={KakaoLoginButton} alt="kakao login button" />
         </LoginButton>
-        <LoginButton>
+        <LoginButton
+          onClick={() => {
+            alert("구글 로그인은 준비중입니다! 카카오를 이용해주세요.");
+          }}
+        >
           <img src={GoogleLoginButton} alt="google login button" />
         </LoginButton>
       </ButtonContainer>
