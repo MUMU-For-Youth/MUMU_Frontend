@@ -12,7 +12,6 @@ const KakaoCallback: React.FC = () => {
     const code = new URLSearchParams(window.location.hash.split("?")[1]).get(
       "code"
     );
-    console.log("code:", code);
     if (!code) return;
 
     handleKakaoCallback(code)

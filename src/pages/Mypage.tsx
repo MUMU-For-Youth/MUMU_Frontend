@@ -50,7 +50,6 @@ const Mypage: React.FC = () => {
 
   const handleLogout = async () => {
     const accessToken = useAuthStore.getState().accessToken;
-    console.log("logout");
     if (!accessToken) return;
     try {
       await axios.post(
