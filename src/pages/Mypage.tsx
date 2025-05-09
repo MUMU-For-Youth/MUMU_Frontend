@@ -188,6 +188,7 @@ const EmptyState = styled.div`
   width: 100%;
   text-align: center;
   font-size: 18px;
+  height: 400px;
   color: ${colors.gray[400]};
   margin: 40px 0;
 `;
