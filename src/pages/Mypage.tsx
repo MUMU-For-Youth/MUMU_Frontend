@@ -92,14 +92,18 @@ const Mypage: React.FC = () => {
 
       <ListContainer>
         {showEdu ? (
-          <CardGrid>
-            {eduList.map((edu) => (
-              <GridCardWrapper>
-                <Card data={edu} type="education" onBookmarkChange={fetch} />
-              </GridCardWrapper>
-            ))}
-          </CardGrid>
-        ) : (
+          eduList.length > 0 ? (
+            <CardGrid>
+              {eduList.map((edu) => (
+                <GridCardWrapper>
+                  <Card data={edu} type="education" onBookmarkChange={fetch} />
+                </GridCardWrapper>
+              ))}
+            </CardGrid>
+          ) : (
+            <EmptyState>북마크한 교육 정보가 없습니다.</EmptyState>
+          )
+        ) : spaceList.length > 0 ? (
           <CardGrid>
             {spaceList.map((space) => (
               <GridCardWrapper>
@@ -107,6 +111,8 @@ const Mypage: React.FC = () => {
               </GridCardWrapper>
             ))}
           </CardGrid>
+        ) : (
+          <EmptyState>북마크한 공간 정보가 없습니다.</EmptyState>
         )}
 
         <Logout onClick={handleLogout}>
@@ -176,6 +182,14 @@ const CardGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 24px;
+`;
+
+const EmptyState = styled.div`
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  color: ${colors.gray[400]};
+  margin: 40px 0;
 `;
 
 const Logout = styled.div`
