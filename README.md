@@ -1,4 +1,4 @@
-# Team Members (팀원 및 팀 소개)
+# Team Members (MUMU Frontend 팀원 소개)
 | 김문희 | 배정연 |
 |:------:|:------:|
 | <img src="https://github.com/user-attachments/assets/8924be39-5afa-4705-a938-ef9bfbe89b7c" alt="김문희" width="150"> | <img src="https://github.com/user-attachments/assets/53942e1d-0477-496b-9afc-e132a4dea6c2" alt="배정연" width="150"> |
